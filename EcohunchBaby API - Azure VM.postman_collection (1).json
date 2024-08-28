@@ -1,0 +1,1010 @@
+{
+	"info": {
+		"_postman_id": "9f2b38fc-ee51-4f3e-8ac9-7e9e7fcbb8d8",
+		"name": "EcohunchBaby API - Azure VM",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "15752241"
+	},
+	"item": [
+		{
+			"name": "User - register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userFedParentFirstName\": \"Julia\",\n  \"userFedFirstName\": \"Baby\",\n  \"userFedBirthWeight\": \"2.2\",\n  \"userFedBirthHeight\": \"21\",\n  \"userFedBirthTempr\": \"87.3\",\n  \"userFedBabyAge\": \"0\",\n  \"userFedBabyGender\": \"F\",\n  \"userFedStrollerModelNo\": \"176456tjlmo\",\n  \"userFedEmailAddress\": \"baby@gmail.com\",\n  \"userFedPassword\": \"abcd1234\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/user/"
+			},
+			"response": []
+		},
+		{
+			"name": "User - sign in",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userFedEmailAddress\": \"baby@gmail.com\",\n  \"userFedPassword\": \"abcd1234\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/auth/signin"
+			},
+			"response": []
+		},
+		{
+			"name": "User - sign out",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/auth/signout"
+			},
+			"response": []
+		},
+		
+		{
+			"name": "User - find one",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://52.168.171.226:3000/api/user/?sysUserId=1&etlSequenceNo=1",
+					"protocol": "http",
+					"host": [
+						"52",
+						"168",
+						"171",
+						"226"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user",
+						""
+					],
+					"query": [
+						{
+							"key": "sysUserId",
+							"value": "1"
+						},
+						{
+							"key": "etlSequenceNo",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User - update",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userFedParentFirstName\": \"Julia\",\n    \"userFedFirstName\": \"Baby\",\n    \"userFedBirthWeight\": 2.2,\n    \"userFedBirthHeight\": 21,\n    \"userFedBirthTempr\": 87.3,\n    \"userFedBabyAge\": 0,\n    \"userFedBabyGender\": \"F\",\n    \"userFedStrollerModelNo\": \"176456tjlmo\",\n    \"userFedEmailAddress\": \"baby@gmail.com\",\n    \"userFedPassword\": \"$2b$10$jPHrCXhc3jBhpnZNpOQY1OCQh.pvLYrNz0SKnyI5nHdn0chmVRhGa\",\n    \"_id\": \"668989abd9ed09ecdd9504b6\",\n    \"etlDateTime\": \"2024-07-06T18:15:07.320Z\",\n    \"createdAt\": \"2024-07-06T18:15:07.324Z\",\n    \"updatedAt\": \"2024-07-06T18:15:07.324Z\",\n    \"etlSequenceNo\": 1,\n    \"sysUserId\": 1,\n    \"__v\": 0\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/user/1/1"
+			},
+			"response": []
+		},
+		{
+			"name": "User - delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/user/2/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Device - create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-API-TOKEN",
+						"value": "DVDSVD931FERE532ASDQWF$RRGRESF!38",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userFedParentFirstName\": \"Julia\",\n  \"userFedAdditionalParentName\": \"Baby\",\n  \"userFedStrollerModelNo\": \"123456tmlkj\",\n  \"userFedEmailAddress\": \"baby@gmail.com\",\n  \"sysUserId\": 1\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/device/"
+			},
+			"response": []
+		},
+		{
+			"name": "Device - get all",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-API-TOKEN",
+						"value": "DVDSVD931FERE532ASDQWF$RRGRESF!38",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/device/"
+			},
+			"response": []
+		},
+		{
+			"name": "Device - get all by user id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-API-TOKEN",
+						"value": "DVDSVD931FERE532ASDQWF$RRGRESF!38",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/device/76543"
+			},
+			"response": []
+		},
+		{
+			"name": "Device - update by sysUserId, etlSequenceNo",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-API-TOKEN",
+						"value": "DVDSVD931FERE532ASDQWF$RRGRESF!38",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userFedParentFirstName\": \"John\",\n    \"userFedAdditionalParentName\": \"Baby\",\n    \"userFedStrollerModelNo\": \"123456tmlkb\",\n    \"userFedEmailAddress\": \"baby@gmail.com\",\n    \"sysUserId\": 76543\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/device/76543/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Device - delete by sysUserId, etlSequenceNo",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "X-API-TOKEN",
+						"value": "DVDSVD931FERE532ASDQWF$RRGRESF!38",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userFedParentFirstName\": \"John\",\n    \"userFedAdditionalParentName\": \"Baby\",\n    \"userFedStrollerModelNo\": \"123456tmlkb\",\n    \"userFedEmailAddress\": \"baby@gmail.com\",\n    \"sysUserId\": 76543\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/device/1/2"
+			},
+			"response": []
+		},
+		{
+			"name": "Fingerprint - create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sysUserId\": 1,\n  \"userFedParent1FirstName\": \"Alice\",\n  \"userFedParent2FirstName\": \"John\",\n  \"sysBiometricTemplate1\": \"<Buffer 74 65 6d 70 6c 61 74 54 31 5f 64 61 74 61>\",\n  \"sysBiometricTemplate2\": \"<Buffer 74 65 6d 70 6c 61 74 74 32 5f 64 61 74 61>\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/fingerprint/current"
+			},
+			"response": []
+		},
+		{
+			"name": "Fingerprint - get all by sysUserId",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://52.168.171.226:3000/api/fingerprint/current/1?startDate=2024-06-01&endDate=2024-08-01",
+					"protocol": "http",
+					"host": [
+						"52",
+						"168",
+						"171",
+						"226"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"fingerprint",
+						"current",
+						"1"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2024-06-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-08-01"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fingerprint - get one by sysUserId, etlSequenceNo",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/fingerprint/current/1/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Fingerprint - update one by sysUserId, etlSequenceNo",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userFedParent1FirstName\": \"Alice\",\n    \"userFedParent2FirstName\": \"Smith\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/fingerprint/current/1/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Fingerprint - delete one by sysUserId, etlSequenceNo",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/fingerprint/current/1/2"
+			},
+			"response": []
+		},
+		{
+			"name": "GPS - create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"sysUserId\": 1,\n  \"userFedParent1FirstName\": \"Liza\",\n  \"userFedParent2FirstName\": \"Marshal\",\n  \"sysGpsLongitude\": \"87990272\",\n  \"sysGpsLatitude\": \"68476939\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/gps/current"
+			},
+			"response": []
+		},
+		{
+			"name": "GPS - get all by sysUserId",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://52.168.171.226:3000/api/gps/current/1?startDate=2024-06-01&endDate=2024-08-01",
+					"protocol": "http",
+					"host": [
+						"52",
+						"168",
+						"171",
+						"226"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"gps",
+						"current",
+						"1"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2024-06-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-08-01"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GPS - get all by sysUserId, etlSequenceNo",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/gps/current/1/3"
+			},
+			"response": []
+		},
+		{
+			"name": "GPS - update by sysUserId, etlSequenceNo",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userFedParent1FirstName\": \"Anne\",\n    \"userFedParent2FirstName\": \"Jones\",\n    \"sysGpsLongitude\": \"87990231\",\n    \"sysGpsLatitude\": \"68476983\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/gps/current/1/3"
+			},
+			"response": []
+		},
+		{
+			"name": "GPS - delete by sysUserId, etlSequenceNo",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/gps/current/1/4"
+			},
+			"response": []
+		},
+		{
+			"name": "AI Nanny - create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"sysUserId\": 1,\n    \"userFedVQuestion\": \"What is the optimal sleeping time for new born?\",\n    \"sysResponse\": \"The optimal sleep time is 16 hours.\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/ainanny/"
+			},
+			"response": []
+		},
+		{
+			"name": "AI Nanny - get all by user id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://52.168.171.226:3000/api/ainanny/1?startDate=2024-07-05&endDate=2024-07-07",
+					"protocol": "http",
+					"host": [
+						"52",
+						"168",
+						"171",
+						"226"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"ainanny",
+						"1"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2024-07-05"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-07-07"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AI Nanny - update by sysUserId, etlSequenceNo",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userFedVQuestion\": \"How many hours does a baby sleep\",\n  \"sysResponse\": \"The baby sleeps for 16 hours.\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/ainanny/76543/6"
+			},
+			"response": []
+		},
+		{
+			"name": "AI Nanny - delete by sysUserId, etlSequenceNo",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/ainanny/1/2"
+			},
+			"response": []
+		},
+		{
+			"name": "weight historical - create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"avgMarketAge\": 25,\n  \"maleTop50PercentileWeight\": 130,\n  \"femaleTop50PercentileWeight\": 120\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/weight/historical/"
+			},
+			"response": []
+		},
+		{
+			"name": "weight historical - get all",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://52.168.171.226:3000/api/weight/historical/"
+			},
+			"response": []
+		},
+		{
+			"name": "weight historical - get single record",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/weight/historical/6689964dd9ed09ecdd9504f0"
+			},
+			"response": []
+		},
+		{
+			"name": "weight historical - update single record",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\n        \"avgMarketAge\": 25,\n        \"maleTop50PercentileWeight\": 130,\n        \"femaleTop50PercentileWeight\": 125\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/weight/historical/6689964dd9ed09ecdd9504f0"
+			},
+			"response": []
+		},
+		{
+			"name": "weight historical - delete single record",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://52.168.171.226:3000/api/weight/historical/6689964dd9ed09ecdd9504f0"
+			},
+			"response": []
+		},
+		{
+			"name": "Length historical - create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"avgMarketAge\": 33,\n    \"avgHeightMale\": 120,\n    \"avgHeightFemale\": 125\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/length/historical/"
+			},
+			"response": []
+		},
+		{
+			"name": "Length historical - get all",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://52.168.171.226:3000/api/length/historical/"
+			},
+			"response": []
+		},
+		{
+			"name": "Length historical - get single record",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/length/historical/668996a7d9ed09ecdd9504f6"
+			},
+			"response": []
+		},
+		{
+			"name": "Length historical - update single record",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"avgHeightFemale\": 124\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/length/historical/668996a7d9ed09ecdd9504f6"
+			},
+			"response": []
+		},
+		{
+			"name": "Length historical - delete single record",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://52.168.171.226:3000/api/length/historical/668996a7d9ed09ecdd9504f6"
+			},
+			"response": []
+		},
+		{
+			"name": "Temperature historical - create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"avgMarketAge\": 40,\n    \"avgMarketTemperature\": 98.6\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/temp/historical/"
+			},
+			"response": []
+		},
+		{
+			"name": "Temperature historical - get all",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://52.168.171.226:3000/api/temp/historical/"
+			},
+			"response": []
+		},
+		{
+			"name": "Temperature historical - get single record",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/temp/historical/66899728d9ed09ecdd9504fc"
+			},
+			"response": []
+		},
+		{
+			"name": "Temperature historical - update single record",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"avgMarketTemperature\": 98.7\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/temp/historical/66899728d9ed09ecdd9504fc"
+			},
+			"response": []
+		},
+		{
+			"name": "Temperature historical - delete single record",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://52.168.171.226:3000/api/temp/historical/66899728d9ed09ecdd9504fc"
+			},
+			"response": []
+		},
+		{
+			"name": "Weight current - create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-API-TOKEN",
+						"value": "DVDSVD931FERE532ASDQWF$RRGRESF!38",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userFedFirstName\": \"Anna\",\n  \"userFedSex\": \"F\",\n  \"userFedBirthWeight\": 5.6,\n  \"userFedAge\": 5,\n  \"sysUserId\": 1,\n  \"sysArduinoWeight\": 10\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/weight/current/"
+			},
+			"response": []
+		},
+		{
+			"name": "Weight current - get all by user id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://52.168.171.226:3000/api/weight/current/user/76543?startDate=2024-06-03&endDate=2024-08-03",
+					"protocol": "http",
+					"host": [
+						"52",
+						"168",
+						"171",
+						"226"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"weight",
+						"current",
+						"user",
+						"76543"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2024-06-03"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-08-03"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Temperature current - create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\n        \"userFedFirstName\": \"Amanda\",\n        \"userFedSex\": \"M\",\n        \"userFedAge\": 10,\n        \"sysUserId\": 1,\n        \"sysArduinoTemperature\": 96.3\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/temp/current/"
+			},
+			"response": []
+		},
+		{
+			"name": "Temperature current - get all by user id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://52.168.171.226:3000/api/temp/current/user/1?startDate=2024-06-03&endDate=2024-08-03",
+					"protocol": "http",
+					"host": [
+						"52",
+						"168",
+						"171",
+						"226"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"temp",
+						"current",
+						"user",
+						"1"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2024-06-03"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-08-03"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Length current - create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userFedFirstName\": \"Carrol\",\n  \"userFedSex\": \"M\",\n  \"userFedBirthLength\": 30,\n  \"userFedAge\": 20,\n  \"sysUserId\": 1,\n  \"sysArduinoLength\": 100\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://52.168.171.226:3000/api/length/current/"
+			},
+			"response": []
+		},
+		{
+			"name": "Length current - get all by user id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://52.168.171.226:3000/api/length/current/user/1?startDate=2024-06-03&endDate=2024-08-03",
+					"protocol": "http",
+					"host": [
+						"52",
+						"168",
+						"171",
+						"226"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"length",
+						"current",
+						"user",
+						"1"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2024-06-03"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-08-03"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

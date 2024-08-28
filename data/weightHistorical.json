@@ -1,0 +1,192 @@
+[
+	{
+		"avgMarketAge": 0.0,
+		"maleTop50PercentileWeight": 3.530203,
+		"femaleTop50PercentileWeight": 3.399186
+	},
+	{
+		"avgMarketAge": 0.5,
+		"maleTop50PercentileWeight": 4.003106,
+		"femaleTop50PercentileWeight": 3.797528
+	},
+	{
+		"avgMarketAge": 1.5,
+		"maleTop50PercentileWeight": 4.879525,
+		"femaleTop50PercentileWeight": 4.544777
+	},
+	{
+		"avgMarketAge": 2.5,
+		"maleTop50PercentileWeight": 5.672889,
+		"femaleTop50PercentileWeight": 5.230584
+	},
+	{
+		"avgMarketAge": 3.5,
+		"maleTop50PercentileWeight": 6.391392,
+		"femaleTop50PercentileWeight": 5.859961
+	},
+	{
+		"avgMarketAge": 4.5,
+		"maleTop50PercentileWeight": 7.041836,
+		"femaleTop50PercentileWeight": 6.437588
+	},
+	{
+		"avgMarketAge": 5.5,
+		"maleTop50PercentileWeight": 7.630425,
+		"femaleTop50PercentileWeight": 6.96785
+	},
+	{
+		"avgMarketAge": 6.5,
+		"maleTop50PercentileWeight": 8.162951,
+		"femaleTop50PercentileWeight": 7.454854
+	},
+	{
+		"avgMarketAge": 7.5,
+		"maleTop50PercentileWeight": 8.644832,
+		"femaleTop50PercentileWeight": 7.902436
+	},
+	{
+		"avgMarketAge": 8.5,
+		"maleTop50PercentileWeight": 9.08112,
+		"femaleTop50PercentileWeight": 8.314178
+	},
+	{
+		"avgMarketAge": 9.5,
+		"maleTop50PercentileWeight": 9.4765,
+		"femaleTop50PercentileWeight": 8.693418
+	},
+	{
+		"avgMarketAge": 10.5,
+		"maleTop50PercentileWeight": 9.835308,
+		"femaleTop50PercentileWeight": 9.043262
+	},
+	{
+		"avgMarketAge": 11.5,
+		"maleTop50PercentileWeight": 10.16154,
+		"femaleTop50PercentileWeight": 9.366594
+	},
+	{
+		"avgMarketAge": 12.5,
+		"maleTop50PercentileWeight": 10.45885,
+		"femaleTop50PercentileWeight": 9.666089
+	},
+	{
+		"avgMarketAge": 13.5,
+		"maleTop50PercentileWeight": 10.73063,
+		"femaleTop50PercentileWeight": 9.944226
+	},
+	{
+		"avgMarketAge": 14.5,
+		"maleTop50PercentileWeight": 10.97992,
+		"femaleTop50PercentileWeight": 10.20329
+	},
+	{
+		"avgMarketAge": 15.5,
+		"maleTop50PercentileWeight": 11.20956,
+		"femaleTop50PercentileWeight": 10.44541
+	},
+	{
+		"avgMarketAge": 16.5,
+		"maleTop50PercentileWeight": 11.42207,
+		"femaleTop50PercentileWeight": 10.67251
+	},
+	{
+		"avgMarketAge": 17.5,
+		"maleTop50PercentileWeight": 11.61978,
+		"femaleTop50PercentileWeight": 10.88639
+	},
+	{
+		"avgMarketAge": 18.5,
+		"maleTop50PercentileWeight": 11.80478,
+		"femaleTop50PercentileWeight": 11.08868
+	},
+	{
+		"avgMarketAge": 19.5,
+		"maleTop50PercentileWeight": 11.97897,
+		"femaleTop50PercentileWeight": 11.2809
+	},
+	{
+		"avgMarketAge": 20.5,
+		"maleTop50PercentileWeight": 12.14404,
+		"femaleTop50PercentileWeight": 11.4644
+	},
+	{
+		"avgMarketAge": 21.5,
+		"maleTop50PercentileWeight": 12.30154,
+		"femaleTop50PercentileWeight": 11.64043
+	},
+	{
+		"avgMarketAge": 22.5,
+		"maleTop50PercentileWeight": 12.45283,
+		"femaleTop50PercentileWeight": 11.81014
+	},
+	{
+		"avgMarketAge": 23.5,
+		"maleTop50PercentileWeight": 12.59913,
+		"femaleTop50PercentileWeight": 11.97454
+	},
+	{
+		"avgMarketAge": 24.5,
+		"maleTop50PercentileWeight": 12.74154,
+		"femaleTop50PercentileWeight": 12.13456
+	},
+	{
+		"avgMarketAge": 25.5,
+		"maleTop50PercentileWeight": 12.88102,
+		"femaleTop50PercentileWeight": 12.29102
+	},
+	{
+		"avgMarketAge": 26.5,
+		"maleTop50PercentileWeight": 13.01842,
+		"femaleTop50PercentileWeight": 12.44469
+	},
+	{
+		"avgMarketAge": 27.5,
+		"maleTop50PercentileWeight": 13.1545,
+		"femaleTop50PercentileWeight": 12.59622
+	},
+	{
+		"avgMarketAge": 28.5,
+		"maleTop50PercentileWeight": 13.2899,
+		"femaleTop50PercentileWeight": 12.74621
+	},
+	{
+		"avgMarketAge": 29.5,
+		"maleTop50PercentileWeight": 13.42519,
+		"femaleTop50PercentileWeight": 12.89517
+	},
+	{
+		"avgMarketAge": 30.5,
+		"maleTop50PercentileWeight": 13.56088,
+		"femaleTop50PercentileWeight": 13.04357
+	},
+	{
+		"avgMarketAge": 31.5,
+		"maleTop50PercentileWeight": 13.69738,
+		"femaleTop50PercentileWeight": 13.19181
+	},
+	{
+		"avgMarketAge": 32.5,
+		"maleTop50PercentileWeight": 13.83505,
+		"femaleTop50PercentileWeight": 13.34023
+	},
+	{
+		"avgMarketAge": 33.5,
+		"maleTop50PercentileWeight": 13.97418,
+		"femaleTop50PercentileWeight": 13.48913
+	},
+	{
+		"avgMarketAge": 34.5,
+		"maleTop50PercentileWeight": 14.11503,
+		"femaleTop50PercentileWeight": 13.63877
+	},
+	{
+		"avgMarketAge": 35.5,
+		"maleTop50PercentileWeight": 14.2578,
+		"femaleTop50PercentileWeight": 13.78937
+	},
+	{
+		"avgMarketAge": 36.0,
+		"maleTop50PercentileWeight": 14.32994,
+		"femaleTop50PercentileWeight": 13.86507
+	}
+]

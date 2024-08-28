@@ -1,0 +1,187 @@
+[
+	{
+		"avgMarketAge": 0.0,
+		"avgHeightMale": 49.98888,
+		"avgHeightFemale": 49.2864
+	},
+	{
+		"avgMarketAge": 0.5,
+		"avgHeightMale": 52.69598,
+		"avgHeightFemale": 51.68358
+	},
+	{
+		"avgMarketAge": 1.5,
+		"avgHeightMale": 56.62843,
+		"avgHeightFemale": 55.28613
+	},
+	{
+		"avgMarketAge": 2.5,
+		"avgHeightMale": 59.60895,
+		"avgHeightFemale": 58.09382
+	},
+	{
+		"avgMarketAge": 3.5,
+		"avgHeightMale": 62.077,
+		"avgHeightFemale": 60.45981
+	},
+	{
+		"avgMarketAge": 4.5,
+		"avgHeightMale": 64.21686,
+		"avgHeightFemale": 62.5367
+	},
+	{
+		"avgMarketAge": 5.5,
+		"avgHeightMale": 66.12531,
+		"avgHeightFemale": 64.40633
+	},
+	{
+		"avgMarketAge": 6.5,
+		"avgHeightMale": 67.86018,
+		"avgHeightFemale": 66.11842
+	},
+	{
+		"avgMarketAge": 7.5,
+		"avgHeightMale": 69.45908,
+		"avgHeightFemale": 67.70574
+	},
+	{
+		"avgMarketAge": 8.5,
+		"avgHeightMale": 70.94804,
+		"avgHeightFemale": 69.19124
+	},
+	{
+		"avgMarketAge": 9.5,
+		"avgHeightMale": 72.34586,
+		"avgHeightFemale": 70.59164
+	},
+	{
+		"avgMarketAge": 10.5,
+		"avgHeightMale": 73.66665,
+		"avgHeightFemale": 71.91962
+	},
+	{
+		"avgMarketAge": 11.5,
+		"avgHeightMale": 74.9213,
+		"avgHeightFemale": 73.18501
+	},
+	{
+		"avgMarketAge": 12.5,
+		"avgHeightMale": 76.11838,
+		"avgHeightFemale": 74.39564
+	},
+	{
+		"avgMarketAge": 13.5,
+		"avgHeightMale": 77.2648,
+		"avgHeightFemale": 75.55785
+	},
+	{
+		"avgMarketAge": 14.5,
+		"avgHeightMale": 78.36622,
+		"avgHeightFemale": 76.67686
+	},
+	{
+		"avgMarketAge": 15.5,
+		"avgHeightMale": 79.42734,
+		"avgHeightFemale": 77.75701
+	},
+	{
+		"avgMarketAge": 16.5,
+		"avgHeightMale": 80.45209,
+		"avgHeightFemale": 78.80198
+	},
+	{
+		"avgMarketAge": 17.5,
+		"avgHeightMale": 81.44384,
+		"avgHeightFemale": 79.81492
+	},
+	{
+		"avgMarketAge": 18.5,
+		"avgHeightMale": 82.40544,
+		"avgHeightFemale": 80.79852
+	},
+	{
+		"avgMarketAge": 19.5,
+		"avgHeightMale": 83.33938,
+		"avgHeightFemale": 81.75512
+	},
+	{
+		"avgMarketAge": 20.5,
+		"avgHeightMale": 84.24783,
+		"avgHeightFemale": 82.68679
+	},
+	{
+		"avgMarketAge": 21.5,
+		"avgHeightMale": 85.1327,
+		"avgHeightFemale": 83.59532
+	},
+	{
+		"avgMarketAge": 22.5,
+		"avgHeightMale": 85.99565,
+		"avgHeightFemale": 84.48233
+	},
+	{
+		"avgMarketAge": 23.5,
+		"avgHeightMale": 86.83818,
+		"avgHeightFemale": 85.34924
+	},
+	{
+		"avgMarketAge": 24.5,
+		"avgHeightMale": 87.66161,
+		"avgHeightFemale": 86.19732
+	},
+	{
+		"avgMarketAge": 25.5,
+		"avgHeightMale": 88.45247,
+		"avgHeightFemale": 87.09026
+	},
+	{
+		"avgMarketAge": 26.5,
+		"avgHeightMale": 89.22326,
+		"avgHeightFemale": 87.95714
+	},
+	{
+		"avgMarketAge": 27.5,
+		"avgHeightMale": 89.97549,
+		"avgHeightFemale": 88.79602
+	},
+	{
+		"avgMarketAge": 28.5,
+		"avgHeightMale": 90.71041,
+		"avgHeightFemale": 89.60551
+	},
+	{
+		"avgMarketAge": 29.5,
+		"avgHeightMale": 91.42908,
+		"avgHeightFemale": 90.38477
+	},
+	{
+		"avgMarketAge": 30.5,
+		"avgHeightMale": 92.13242,
+		"avgHeightFemale": 91.13342
+	},
+	{
+		"avgMarketAge": 31.5,
+		"avgHeightMale": 92.82127,
+		"avgHeightFemale": 91.85154
+	},
+	{
+		"avgMarketAge": 32.5,
+		"avgHeightMale": 93.49638,
+		"avgHeightFemale": 92.53964
+	},
+	{
+		"avgMarketAge": 33.5,
+		"avgHeightMale": 94.15847,
+		"avgHeightFemale": 93.19854
+	},
+	{
+		"avgMarketAge": 34.5,
+		"avgHeightMale": 94.80823,
+		"avgHeightFemale": 93.82945
+	},
+	{
+		"avgMarketAge": 35.5,
+		"avgHeightMale": 95.44637,
+		"avgHeightFemale": 94.43382
+	}
+]
