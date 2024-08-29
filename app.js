@@ -21,7 +21,7 @@ dotenv.config();
 const app = express();
 // Connect to MongoDB
 mongoose
-  .connect(process.env.DB_URL, {
+  .connect("mongodb+srv://admin:admin@cluster0.yk4m9vr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
