@@ -170,8 +170,7 @@ export const addNewQuestion = async (req, res) => {
 
     // Make a request to the external API
     const response = await axios.post(
-      "https://smartbabyai2-dfgfeeevb6f6e2c6.eastus-01.azurewebsites.net/ask,
-      // "https://smartbabyai2-dfgfeeevb6f6e2c6.eastus-01.azurewebsites.net/ask",
+      "https://smartbabyai2-dfgfeeevb6f6e2c6.eastus-01.azurewebsites.net/ask",
       requestData
     );
 
