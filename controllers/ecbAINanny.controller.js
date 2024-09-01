@@ -27,7 +27,7 @@ export const findAllByUser = async (req, res) => {
       sysUserId: userId,
     };
 
-    const data = await ecbAiNanny.find(query);
+    const data = await ecbAINanny.find(query);
     res.status(200).json(data);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -36,7 +36,7 @@ export const findAllByUser = async (req, res) => {
 
 // Create a new record
 export const create = async (req, res) => {
-  const data = new ecbAiNanny(req.body);
+  const data = new ecbAINanny(req.body);
   try {
     const newData = await data.save();
     res.status(201).json(newData);
@@ -49,7 +49,7 @@ export const create = async (req, res) => {
 export const update = async (req, res) => {
   try {
     const { sysUserId, etlSequenceNo } = req.body;
-    const updatedData = await ecbAiNanny.findOneAndUpdate(
+    const updatedData = await ecbAINanny.findOneAndUpdate(
       { sysUserId: sysUserId, etlSequenceNo: etlSequenceNo },
       req.body,
       { new: true, runValidators: true }
@@ -69,7 +69,7 @@ export const update = async (req, res) => {
 export const deleteRecord = async (req, res) => {
   try {
     const { sysUserId, etlSequenceNo } = req.body;
-    const deletedData = await ecbAiNanny.findOneAndDelete({
+    const deletedData = await ecbAINanny.findOneAndDelete({
       sysUserId: sysUserId,
       etlSequenceNo: etlSequenceNo,
     });
