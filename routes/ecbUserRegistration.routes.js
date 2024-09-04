@@ -11,7 +11,7 @@ import jwtAuth from "../jwtAuth.js"; // Import the JWT middleware
 const router = Router();
 
 // Create new record
-router.post("/", jwtAuth, create);
+router.post("/", create);
 
 // Get all records
 router.get("/", jwtAuth, findAll);
