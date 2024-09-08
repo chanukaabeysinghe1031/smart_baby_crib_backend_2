@@ -19,7 +19,7 @@ router.post("/", create);
 router.post("/signin", signin);
 
 // signout
-router.post("/signin", signout);
+router.post("/signout", signout);
 
 // Get all records
 router.get("/", jwtAuth, findAll);
