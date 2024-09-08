@@ -59,7 +59,7 @@ export const signin = async (req, res) => {
 };
 
 // Signout Function for Token-Based Authentication (JWT)
-export const signOut = (req, res) => {
+export const signout = (req, res) => {
   try {
     // If using cookies to store the token, clear it
     res.clearCookie("token"); // Assuming the token is stored in a cookie
