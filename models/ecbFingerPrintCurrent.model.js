@@ -4,7 +4,7 @@ const ecbFingerPrintCurrentSchema = new mongoose.Schema(
   {
     etlDateTime: { type: Date, default: Date.now },
     etlSequenceNo: { type: Number },
-    sysUserId: { type: Number, required: true },
+    sysUserId: { type: String, required: true },
     sysBiometricTemplate1: { type: Buffer, required: true },
     sysBiometricTemplate2: { type: Buffer, required: true },
   },
