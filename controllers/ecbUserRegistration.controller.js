@@ -9,7 +9,7 @@ export const signin = async (req, res) => {
 
   try {
     // Find the user by email
-    const user = await ecbUserRegisteration.findOne({
+    const user = await ecbUserRegistration.findOne({
       userFedEmailAddress: email,
     });
 
