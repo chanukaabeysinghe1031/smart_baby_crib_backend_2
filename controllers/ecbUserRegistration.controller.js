@@ -58,6 +58,21 @@ export const signin = async (req, res) => {
   }
 };
 
+// Signout Function for Token-Based Authentication (JWT)
+export const signOut = (req, res) => {
+  try {
+    // If using cookies to store the token, clear it
+    res.clearCookie("token"); // Assuming the token is stored in a cookie
+
+    // Optionally, add logic here to invalidate the token in the database if stored
+
+    // Return success message
+    return res.status(200).json({ message: "Successfully signed out" });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+
 // Retrieve all records
 export const findAll = async (req, res) => {
   try {
