@@ -6,6 +6,7 @@ import {
   update,
   deleteRecord,
   signin,
+  signout
 } from "../controllers/ecbUserRegistration.controller.js";
 import jwtAuth from "../jwtAuth.js"; // Import the JWT middleware
 
@@ -16,6 +17,9 @@ router.post("/", create);
 
 // signin
 router.post("/signin", signin);
+
+// signout
+router.post("/signin", signout);
 
 // Get all records
 router.get("/", jwtAuth, findAll);
