@@ -96,10 +96,25 @@ export const findOne = async (req, res) => {
   }
 };
 
-// Create a new record
+// Create a new record with an incremented sysUserId
 export const create = async (req, res) => {
-  const data = new ecbUserRegistration(req.body);
   try {
+    // Find the largest sysUserId
+    const maxUser = await ecbUserRegistration
+      .findOne()
+      .sort({ sysUserId: -1 })
+      .exec();
+
+    // Set the new sysUserId to max + 1, or default to 1 if no users exist
+    const newSysUserId = maxUser ? maxUser.sysUserId + 1 : 1;
+
+    // Create a new user with the incremented sysUserId
+    const data = new ecbUserRegistration({
+      ...req.body,
+      sysUserId: newSysUserId,
+    });
+
+    // Save the new user
     const newData = await data.save();
     res.status(201).json(newData);
   } catch (err) {
