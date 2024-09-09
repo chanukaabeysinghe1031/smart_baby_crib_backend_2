@@ -3,7 +3,7 @@ import ecbWeightCurrent from '../models/ecbWeightCurrent.model.js'
 export const findAllByUser = async (req, res) => {
   try {
     const { startDate, endDate } = req.query
-    const userId = req.params.id
+    const userId =  Number(req.params.id);
     const start = new Date(startDate)
     const end = new Date(endDate)
     start.setUTCHours(0, 0, 0, 0)
