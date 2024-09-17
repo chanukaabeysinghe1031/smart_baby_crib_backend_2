@@ -43,15 +43,7 @@ export const signin = async (req, res) => {
     // Return user details (excluding sensitive information)
     res.json({
       message: "Sign-in successful",
-      user: {
-        id: user._id,
-        firstName: user.userFedFirstName,
-        parentFirstName: user.userFedParentFirstName,
-        email: user.userFedEmailAddress,
-        babyGender: user.userFedBabyGender,
-        babyAge: user.userFedBabyAge,
-        strollerModelNo: user.userFedStrollerModelNo,
-      },
+      user: user,
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
@@ -96,6 +88,26 @@ export const findOne = async (req, res) => {
   }
 };
 
+// Retrieve a single record by sysUserId
+export const findBySysUserId = async (req, res) => {
+  try {
+    // Find the user by sysUserId
+    const data = await ecbUserRegistration.findOne({
+      sysUserId: req.params.sysUserId,
+    });
+
+    // If the user is not found, return a 404 error
+    if (!data) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Return the user data
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // Create a new record with an incremented sysUserId
 export const create = async (req, res) => {
   try {
@@ -122,17 +134,22 @@ export const create = async (req, res) => {
   }
 };
 
-// Update a record by ID
+// Update a record by sysUserId
 export const update = async (req, res) => {
   try {
-    const updatedData = await ecbUserRegistration.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
+    // Find and update the record by sysUserId
+    const updatedData = await ecbUserRegistration.findOneAndUpdate(
+      { sysUserId: req.params.id }, // Search by sysUserId
+      req.body, // Data to update
+      { new: true, runValidators: true } // Options: return the updated record and run validation
     );
+
+    // If no data found, return 404
     if (!updatedData) {
-      return res.status(404).json({ message: "Data not found" });
+      return res.status(404).json({ message: "User not found" });
     }
+
+    // Return the updated data
     res.status(200).json(updatedData);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -142,9 +159,9 @@ export const update = async (req, res) => {
 // Delete a record by ID
 export const deleteRecord = async (req, res) => {
   try {
-    const deletedData = await ecbUserRegistration.findByIdAndDelete(
-      req.params.id
-    );
+    const deletedData = await ecbUserRegistration.findOneAndDelete({
+      sysUserId: req.params.id,
+    });
     if (!deletedData) {
       return res.status(404).json({ message: "Data not found" });
     }

@@ -13,14 +13,26 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"userFedParentFirstName\": \"Julia\",\n  \"userFedFirstName\": \"Baby\",\n  \"userFedBirthWeight\": \"2.2\",\n  \"userFedBirthHeight\": \"21\",\n  \"userFedBirthTempr\": \"87.3\",\n  \"userFedBabyAge\": \"0\",\n  \"userFedBabyGender\": \"F\",\n  \"userFedStrollerModelNo\": \"176456tjlmo\",\n  \"userFedEmailAddress\": \"baby@gmail.com\",\n  \"userFedPassword\": \"abcd1234\"\n}",
+					"raw": {
+						"userFedParentFirstName": "Julia",
+						"userFedFirstName": "Baby",
+						"userFedBirthWeight": "2.2",
+						"userFedBirthHeight": "21",
+						"userFedBirthTempr": "87.3",
+						"userFedBabyAge": "0",
+						"userFedBabyGender": "F",
+						"userFedStrollerModelNo": "176456tjlmo",
+						"userFedEmailAddress": "baby@gmail.com",
+						"userFedPassword": "abcd1234"
+					  }
+					  ,
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/user/"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/user/"
 			},
 			"response": []
 		},
@@ -31,14 +43,17 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"userFedEmailAddress\": \"baby@gmail.com\",\n  \"userFedPassword\": \"abcd1234\"\n}",
+					"raw": {
+						"userFedEmailAddress": "baby@gmail.com",
+						"userFedPassword": "abcd1234"
+					},
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/auth/signin"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/user/signin"
 			},
 			"response": []
 		},
@@ -56,7 +71,7 @@
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/auth/signout"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/user/signout"
 			},
 			"response": []
 		},
@@ -79,7 +94,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://52.168.171.226:3000/api/user/?sysUserId=1&etlSequenceNo=1",
+					"raw": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/user/sysUserId/1",
 					"protocol": "http",
 					"host": [
 						"52",
@@ -114,14 +129,32 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"userFedParentFirstName\": \"Julia\",\n    \"userFedFirstName\": \"Baby\",\n    \"userFedBirthWeight\": 2.2,\n    \"userFedBirthHeight\": 21,\n    \"userFedBirthTempr\": 87.3,\n    \"userFedBabyAge\": 0,\n    \"userFedBabyGender\": \"F\",\n    \"userFedStrollerModelNo\": \"176456tjlmo\",\n    \"userFedEmailAddress\": \"baby@gmail.com\",\n    \"userFedPassword\": \"$2b$10$jPHrCXhc3jBhpnZNpOQY1OCQh.pvLYrNz0SKnyI5nHdn0chmVRhGa\",\n    \"_id\": \"668989abd9ed09ecdd9504b6\",\n    \"etlDateTime\": \"2024-07-06T18:15:07.320Z\",\n    \"createdAt\": \"2024-07-06T18:15:07.324Z\",\n    \"updatedAt\": \"2024-07-06T18:15:07.324Z\",\n    \"etlSequenceNo\": 1,\n    \"sysUserId\": 1,\n    \"__v\": 0\n}",
+					"raw": {
+						"userFedParentFirstName": "Julia",
+						"userFedFirstName": "Baby",
+						"userFedBirthWeight": 2.2,
+						"userFedBirthHeight": 21,
+						"userFedBirthTempr": 87.3,
+						"userFedBabyAge": 0,
+						"userFedBabyGender": "F",
+						"userFedStrollerModelNo": "176456tjlmo",
+						"userFedEmailAddress": "baby@gmail.com",
+						"userFedPassword": "$2b$10$jPHrCXhc3jBhpnZNpOQY1OCQh.pvLYrNz0SKnyI5nHdn0chmVRhGa",
+						"_id": "668989abd9ed09ecdd9504b6",
+						"etlDateTime": "2024-07-06T18:15:07.320Z",
+						"createdAt": "2024-07-06T18:15:07.324Z",
+						"updatedAt": "2024-07-06T18:15:07.324Z",
+						"etlSequenceNo": 1,
+						"sysUserId": 1,
+						"__v": 0
+					},					
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/user/1/1"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/user/1"
 			},
 			"response": []
 		},
@@ -139,7 +172,7 @@
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/user/2/1"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/user/2/1"
 			},
 			"response": []
 		},
@@ -156,14 +189,44 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"userFedParentFirstName\": \"Julia\",\n  \"userFedAdditionalParentName\": \"Baby\",\n  \"userFedStrollerModelNo\": \"123456tmlkj\",\n  \"userFedEmailAddress\": \"baby@gmail.com\",\n  \"sysUserId\": 1\n}\n",
+					"raw": {
+						"userFedStrollerModelNo": "123456tmlkj",
+						"sysUserId": 1
+					},
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/device/"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/device/"
+			},
+			"response": []
+		},
+		{
+			"name": "Device - create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-API-TOKEN",
+						"value": "DVDSVD931FERE532ASDQWF$RRGRESF!38",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": {
+						"userFedStrollerModelNo": "123456tmlkj",
+						"sysUserId": 1
+					},
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/device/withoutJWT"
 			},
 			"response": []
 		},
@@ -190,7 +253,34 @@
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/device/"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/device/"
+			},
+			"response": []
+		},
+		{
+			"name": "Device - get all",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-API-TOKEN",
+						"value": "DVDSVD931FERE532ASDQWF$RRGRESF!38",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/device/withoutJWT"
 			},
 			"response": []
 		},
@@ -217,7 +307,34 @@
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/device/76543"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/device/76543"
+			},
+			"response": []
+		},
+		{
+			"name": "Device - get all by user id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-API-TOKEN",
+						"value": "DVDSVD931FERE532ASDQWF$RRGRESF!38",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/device/withoutJWT/76543"
 			},
 			"response": []
 		},
@@ -234,14 +351,80 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"userFedParentFirstName\": \"John\",\n    \"userFedAdditionalParentName\": \"Baby\",\n    \"userFedStrollerModelNo\": \"123456tmlkb\",\n    \"userFedEmailAddress\": \"baby@gmail.com\",\n    \"sysUserId\": 76543\n}\n",
+					"raw": {
+						"userFedParentFirstName": "John",
+						"userFedAdditionalParentName": "Baby",
+						"userFedStrollerModelNo": "123456tmlkb",
+						"userFedEmailAddress": "baby@gmail.com",
+						"sysUserId": 76543
+					},
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/device/76543/1"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/device/76543"
+			},
+			"response": []
+		},
+		{
+			"name": "Device - update by sysUserId, etlSequenceNo",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-API-TOKEN",
+						"value": "DVDSVD931FERE532ASDQWF$RRGRESF!38",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw":{
+						"userFedParentFirstName": "John",
+						"userFedAdditionalParentName": "Baby",
+						"userFedStrollerModelNo": "123456tmlkb",
+						"userFedEmailAddress": "baby@gmail.com",
+						"sysUserId": 76543
+					},					  
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/device/withoutJWT/76543/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Device - update by sysUserId, etlSequenceNo",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-API-TOKEN",
+						"value": "DVDSVD931FERE532ASDQWF$RRGRESF!38",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": {
+						"userFedParentFirstName": "John",
+						"userFedAdditionalParentName": "Baby",
+						"userFedStrollerModelNo": "123456tmlkb",
+						"userFedEmailAddress": "baby@gmail.com",
+						"sysUserId": 76543
+					},					  
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/device/withoutJWT/76543/1"
 			},
 			"response": []
 		},
@@ -258,14 +441,50 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"userFedParentFirstName\": \"John\",\n    \"userFedAdditionalParentName\": \"Baby\",\n    \"userFedStrollerModelNo\": \"123456tmlkb\",\n    \"userFedEmailAddress\": \"baby@gmail.com\",\n    \"sysUserId\": 76543\n}\n",
+					"raw": {
+						"userFedParentFirstName": "John",
+						"userFedAdditionalParentName": "Baby",
+						"userFedStrollerModelNo": "123456tmlkb",
+						"userFedEmailAddress": "baby@gmail.com",
+						"sysUserId": 76543
+					},					  
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/device/1/2"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/device/1/2"
+			},
+			"response": []
+		},
+		{
+			"name": "Device - delete by sysUserId, etlSequenceNo",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "X-API-TOKEN",
+						"value": "DVDSVD931FERE532ASDQWF$RRGRESF!38",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw":{
+						"userFedParentFirstName": "John",
+						"userFedAdditionalParentName": "Baby",
+						"userFedStrollerModelNo": "123456tmlkb",
+						"userFedEmailAddress": "baby@gmail.com",
+						"sysUserId": 76543
+					},					  
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/device/withoutJWT/1/2"
 			},
 			"response": []
 		},
@@ -276,14 +495,40 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"sysUserId\": 1,\n  \"userFedParent1FirstName\": \"Alice\",\n  \"userFedParent2FirstName\": \"John\",\n  \"sysBiometricTemplate1\": \"<Buffer 74 65 6d 70 6c 61 74 54 31 5f 64 61 74 61>\",\n  \"sysBiometricTemplate2\": \"<Buffer 74 65 6d 70 6c 61 74 74 32 5f 64 61 74 61>\"\n}",
+					"raw":{
+						"sysUserId": 1,
+						"sysBiometricTemplate1": "<Buffer 74 65 6d 70 6c 61 74 54 31 5f 64 61 74 61>",
+						"sysBiometricTemplate2": "<Buffer 74 65 6d 70 6c 61 74 74 32 5f 64 61 74 61>"
+					},					  
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/fingerprint/current"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/fingerprint/current"
+			},
+			"response": []
+		},
+		{
+			"name": "Fingerprint - create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": {
+						"sysUserId": 1,
+						"sysBiometricTemplate1": "<Buffer 74 65 6d 70 6c 61 74 54 31 5f 64 61 74 61>",
+						"sysBiometricTemplate2": "<Buffer 74 65 6d 70 6c 61 74 74 32 5f 64 61 74 61>"
+					},
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/fingerprint/current/withoutJWT"
 			},
 			"response": []
 		},
@@ -305,7 +550,54 @@
 					}
 				},
 				"url": {
-					"raw": "http://52.168.171.226:3000/api/fingerprint/current/1?startDate=2024-06-01&endDate=2024-08-01",
+					"raw": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/fingerprint/current/1?startDate=2024-06-01&endDate=2024-08-01",
+					"protocol": "http",
+					"host": [
+						"52",
+						"168",
+						"171",
+						"226"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"fingerprint",
+						"current",
+						"1"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2024-06-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-08-01"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fingerprint - get all by sysUserId",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/fingerprint/current/withoutJWT/1?startDate=2024-06-01&endDate=2024-08-01",
 					"protocol": "http",
 					"host": [
 						"52",
@@ -351,7 +643,28 @@
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/fingerprint/current/1/1"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/fingerprint/current/1/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Fingerprint - get one by sysUserId, etlSequenceNo",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/fingerprint/withoutJWT/current/1/1"
 			},
 			"response": []
 		},
@@ -362,14 +675,38 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"userFedParent1FirstName\": \"Alice\",\n    \"userFedParent2FirstName\": \"Smith\"\n}",
+					"raw": {
+						"userFedParent1FirstName": "Alice",
+						"userFedParent2FirstName": "Smith"
+					},					  
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/fingerprint/current/1/1"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/fingerprint/current/1/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Fingerprint - update one by sysUserId, etlSequenceNo",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": {
+						"userFedParent1FirstName": "Alice",
+						"userFedParent2FirstName": "Smith"
+					},					  
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/fingerprint/current/withoutJWT/1/1"
 			},
 			"response": []
 		},
@@ -387,7 +724,25 @@
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/fingerprint/current/1/2"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/fingerprint/current/1/2"
+			},
+			"response": []
+		},
+		{
+			"name": "Fingerprint - delete one by sysUserId, etlSequenceNo",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/fingerprint/current/withoutJWT/1/2"
 			},
 			"response": []
 		},
@@ -398,14 +753,40 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"sysUserId\": 1,\n  \"userFedParent1FirstName\": \"Liza\",\n  \"userFedParent2FirstName\": \"Marshal\",\n  \"sysGpsLongitude\": \"87990272\",\n  \"sysGpsLatitude\": \"68476939\"\n}",
+					"raw": {
+						"sysUserId": 1,
+						"sysGpsLongitude": "87990272",
+						"sysGpsLatitude": "68476939"
+					},					  
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/gps/current"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/gps/current"
+			},
+			"response": []
+		},
+		{
+			"name": "GPS - create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": {
+						"sysUserId": 1,
+						"sysGpsLongitude": "87990272",
+						"sysGpsLatitude": "68476939"
+					},					  
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/gps/current/withoutJWT"
 			},
 			"response": []
 		},
@@ -427,7 +808,54 @@
 					}
 				},
 				"url": {
-					"raw": "http://52.168.171.226:3000/api/gps/current/1?startDate=2024-06-01&endDate=2024-08-01",
+					"raw": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/gps/current/1?startDate=2024-06-01&endDate=2024-08-01",
+					"protocol": "http",
+					"host": [
+						"52",
+						"168",
+						"171",
+						"226"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"gps",
+						"current",
+						"1"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2024-06-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-08-01"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GPS - get all by sysUserId",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/gps/current/withoutJWT/1?startDate=2024-06-01&endDate=2024-08-01",
 					"protocol": "http",
 					"host": [
 						"52",
@@ -473,7 +901,28 @@
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/gps/current/1/3"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/gps/current/1/3"
+			},
+			"response": []
+		},
+		{
+			"name": "GPS - get all by sysUserId, etlSequenceNo",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/gps/withoutJWT/current/1/3"
 			},
 			"response": []
 		},
@@ -484,14 +933,42 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"userFedParent1FirstName\": \"Anne\",\n    \"userFedParent2FirstName\": \"Jones\",\n    \"sysGpsLongitude\": \"87990231\",\n    \"sysGpsLatitude\": \"68476983\"\n}",
+					"raw": {
+						"userFedParent1FirstName": "Anne",
+						"userFedParent2FirstName": "Jones",
+						"sysGpsLongitude": "87990231",
+						"sysGpsLatitude": "68476983"
+					},					  
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/gps/current/1/3"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/gps/current/1/3"
+			},
+			"response": []
+		},
+		{
+			"name": "GPS - update by sysUserId, etlSequenceNo",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": {
+						"userFedParent1FirstName": "Anne",
+						"userFedParent2FirstName": "Jones",
+						"sysGpsLongitude": "87990231",
+						"sysGpsLatitude": "68476983"
+					},
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/gps/current/withoutJWT/1/3"
 			},
 			"response": []
 		},
@@ -509,7 +986,25 @@
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/gps/current/1/4"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/gps/current/1/4"
+			},
+			"response": []
+		},
+		{
+			"name": "GPS - delete by sysUserId, etlSequenceNo",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/gps/current/withoutJWT/1/4"
 			},
 			"response": []
 		},
@@ -520,14 +1015,69 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"sysUserId\": 1,\n    \"userFedVQuestion\": \"What is the optimal sleeping time for new born?\",\n    \"sysResponse\": \"The optimal sleep time is 16 hours.\"\n}\n",
+					"raw": {
+						"sysUserId": 1,
+						"userFedVQuestion": "What is the optimal sleeping time for new born?",
+						"sysResponse": "The optimal sleep time is 16 hours."
+					},					  
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/ainanny/"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/ainanny/"
+			},
+			"response": []
+		},
+		{
+			"name": "AI Nanny - create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": {
+						"question": "Hi, I noticed that he seems to be a bit fussy and isn’t sleeping well. Do you think it could be due to his current location or something else? We were out for a walk in the stroller earlier, and I'm worried he might have caught a chill. Can you check his condition and advise?",
+						"sysUserId": "1",
+						"weight": 9.5,
+						"height": 74,
+						"longitude": -73.935242,
+						"latitude": 40.73061,
+						"childName": "John",
+						"parentFirstName": "Emily",
+						"currentAge": 18,
+						"sex": "M"
+					},					  
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/ainanny/generateSolution/withoutJWT"
+			},
+			"response": []
+		},
+		{
+			"name": "AI Nanny - create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw":{
+						"sysUserId": 1,
+						"question": "What is the optimal sleeping time for new born?",
+                        "threadId":236
+					},					  
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/generateSolution/ainanny/"
 			},
 			"response": []
 		},
@@ -549,7 +1099,53 @@
 					}
 				},
 				"url": {
-					"raw": "http://52.168.171.226:3000/api/ainanny/1?startDate=2024-07-05&endDate=2024-07-07",
+					"raw": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/ainanny/1?startDate=2024-07-05&endDate=2024-07-07",
+					"protocol": "http",
+					"host": [
+						"52",
+						"168",
+						"171",
+						"226"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"ainanny",
+						"1"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2024-07-05"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-07-07"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AI Nanny - get all by user id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/ainanny/withoutJWT/1?startDate=2024-07-05&endDate=2024-07-07",
 					"protocol": "http",
 					"host": [
 						"52",
@@ -584,14 +1180,42 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"userFedVQuestion\": \"How many hours does a baby sleep\",\n  \"sysResponse\": \"The baby sleeps for 16 hours.\"\n}",
+					"raw":{
+						"sysUserId":1,
+						"etlSequenceNo":1,
+						"userFedVQuestion": "How many hours does a baby sleep",
+						"sysResponse": "The baby sleeps for 16 hours."
+					},					  
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/ainanny/76543/6"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/ainanny/"
+			},
+			"response": []
+		},
+		{
+			"name": "AI Nanny - update by sysUserId, etlSequenceNo withoutJWT",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": {
+						"sysUserId":1,
+						"etlSequenceNo":1,
+						"userFedVQuestion": "How many hours does a baby sleep",
+						"sysResponse": "The baby sleeps for 16 hours."
+					},					  
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/ainanny/withoutJWT/"
 			},
 			"response": []
 		},
@@ -602,14 +1226,38 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "",
+					"raw": {
+						"sysUserId":1,
+						"etlSequenceNo":1
+					},					  
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/ainanny/1/2"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/ainanny"
+			},
+			"response": []
+		},
+		{
+			"name": "AI Nanny - delete by sysUserId, etlSequenceNo",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": {
+						"sysUserId":1,
+						"etlSequenceNo":1
+					},					  
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/withoutJWT/ainanny"
 			},
 			"response": []
 		},
@@ -620,14 +1268,18 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"avgMarketAge\": 25,\n  \"maleTop50PercentileWeight\": 130,\n  \"femaleTop50PercentileWeight\": 120\n}",
+					"raw": {
+						"avgMarketAge": 25,
+						"maleTop50PercentileWeight": 130,
+						"femaleTop50PercentileWeight": 120
+					},					  
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/weight/historical/"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/weight/historical/"
 			},
 			"response": []
 		},
@@ -636,7 +1288,7 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "http://52.168.171.226:3000/api/weight/historical/"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/weight/historical/"
 			},
 			"response": []
 		},
@@ -657,7 +1309,7 @@
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/weight/historical/6689964dd9ed09ecdd9504f0"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/weight/historical/6689964dd9ed09ecdd9504f0"
 			},
 			"response": []
 		},
@@ -675,7 +1327,25 @@
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/weight/historical/6689964dd9ed09ecdd9504f0"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/weight/historical/"
+			},
+			"response": []
+		},
+		{
+			"name": "weight historical - update single record",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\n        \"avgMarketAge\": 25,\n        \"maleTop50PercentileWeight\": 130,\n        \"femaleTop50PercentileWeight\": 125\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/weight/historical/withoutJWT"
 			},
 			"response": []
 		},
@@ -684,7 +1354,25 @@
 			"request": {
 				"method": "DELETE",
 				"header": [],
-				"url": "http://52.168.171.226:3000/api/weight/historical/6689964dd9ed09ecdd9504f0"
+				"body": {
+					"mode": "raw",
+					"raw": {"avgMarketAge": 25},
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/weight/historical/6689964dd9ed09ecdd9504f0"
+			},
+			"response": []
+		},
+		{
+			"name": "weight historical - delete single record",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/weight/historical/withoutJWT/6689964dd9ed09ecdd9504f0"
 			},
 			"response": []
 		},
@@ -695,14 +1383,40 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"avgMarketAge\": 33,\n    \"avgHeightMale\": 120,\n    \"avgHeightFemale\": 125\n}",
+					"raw": {
+						"avgMarketAge": 33,
+						"avgHeightMale": 120,
+						"avgHeightFemale": 125
+					},					  
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/length/historical/"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/length/historical/"
+			},
+			"response": []
+		},
+		{
+			"name": "Length historical - create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": {
+						"avgMarketAge": 33,
+						"avgHeightMale": 120,
+						"avgHeightFemale": 125
+					},					  
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/length/historical/withoutJWT"
 			},
 			"response": []
 		},
@@ -711,7 +1425,7 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "http://52.168.171.226:3000/api/length/historical/"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/length/historical/"
 			},
 			"response": []
 		},
@@ -732,7 +1446,7 @@
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/length/historical/668996a7d9ed09ecdd9504f6"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/length/historical/668996a7d9ed09ecdd9504f6"
 			},
 			"response": []
 		},
@@ -743,14 +1457,38 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"avgHeightFemale\": 124\n}",
+					"raw": {
+						"avgMarketAge":0,
+						"avgHeightFemale": 124
+					},					  
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/length/historical/668996a7d9ed09ecdd9504f6"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/length/historical/668996a7d9ed09ecdd9504f6"
+			},
+			"response": []
+		},
+		{
+			"name": "Length historical - update single record",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": {  
+						"avgMarketAge":0,
+						"avgHeightFemale": 124
+					},
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/length/historical/withoutJWT/"
 			},
 			"response": []
 		},
@@ -759,7 +1497,38 @@
 			"request": {
 				"method": "DELETE",
 				"header": [],
-				"url": "http://52.168.171.226:3000/api/length/historical/668996a7d9ed09ecdd9504f6"
+				"body": {
+					"mode": "raw",
+					"raw": {  
+						"avgMarketAge":0
+					},
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/length/historical/"
+			},
+			"response": []
+		},
+		{
+			"name": "Length historical - delete single record",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": {  
+						"avgMarketAge":0
+					},
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/length/historical/withoutJWT/"
 			},
 			"response": []
 		},
@@ -770,14 +1539,38 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"avgMarketAge\": 40,\n    \"avgMarketTemperature\": 98.6\n}",
+					"raw": {
+						"avgMarketAge": 40,
+						"avgMarketTemperature": 98.6
+					},					  
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/temp/historical/"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/temp/historical/"
+			},
+			"response": []
+		},
+		{
+			"name": "Temperature historical - create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": {
+						"avgMarketAge": 40,
+						"avgMarketTemperature": 98.6
+					},					  
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/temp/historical/withoutJWT/"
 			},
 			"response": []
 		},
@@ -786,7 +1579,7 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "http://52.168.171.226:3000/api/temp/historical/"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/temp/historical/"
 			},
 			"response": []
 		},
@@ -807,7 +1600,7 @@
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/temp/historical/66899728d9ed09ecdd9504fc"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/temp/historical/66899728d9ed09ecdd9504fc"
 			},
 			"response": []
 		},
@@ -818,14 +1611,38 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"avgMarketTemperature\": 98.7\n}",
+					"raw": {
+						"avgMarketAge":25,
+						"avgMarketTemperature": 98.7
+					},					  
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/temp/historical/66899728d9ed09ecdd9504fc"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/temp/historical/"
+			},
+			"response": []
+		},
+		{
+			"name": "Temperature historical - update single record",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": {
+						"avgMarketAge":25,
+						"avgMarketTemperature": 98.7
+					},					  
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/temp/historical/withoutJWT/"
 			},
 			"response": []
 		},
@@ -834,7 +1651,38 @@
 			"request": {
 				"method": "DELETE",
 				"header": [],
-				"url": "http://52.168.171.226:3000/api/temp/historical/66899728d9ed09ecdd9504fc"
+				"body": {
+					"mode": "raw",
+					"raw": {
+						"avgMarketAge":25
+					},					  
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/temp/historical"
+			},
+			"response": []
+		},
+		{
+			"name": "Temperature historical - delete single record",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": {
+						"avgMarketAge":25
+					},					  
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/temp/historical/withoutJWT/"
 			},
 			"response": []
 		},
@@ -851,14 +1699,44 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"userFedFirstName\": \"Anna\",\n  \"userFedSex\": \"F\",\n  \"userFedBirthWeight\": 5.6,\n  \"userFedAge\": 5,\n  \"sysUserId\": 1,\n  \"sysArduinoWeight\": 10\n}",
+					"raw":{
+						"sysUserId": 1,
+						"sysArduinoWeight": 10
+					},
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/weight/current/"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/weight/current/"
+			},
+			"response": []
+		},
+		{
+			"name": "Weight current - create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-API-TOKEN",
+						"value": "DVDSVD931FERE532ASDQWF$RRGRESF!38",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": {
+						"sysUserId": 1,
+						"sysArduinoWeight": 10
+					},					  
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/weight/current/withoutJWT/"
 			},
 			"response": []
 		},
@@ -868,7 +1746,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://52.168.171.226:3000/api/weight/current/user/76543?startDate=2024-06-03&endDate=2024-08-03",
+					"raw": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/weight/current/user/76543?startDate=2024-06-03&endDate=2024-08-03",
 					"protocol": "http",
 					"host": [
 						"52",
@@ -905,14 +1783,38 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "    {\n        \"userFedFirstName\": \"Amanda\",\n        \"userFedSex\": \"M\",\n        \"userFedAge\": 10,\n        \"sysUserId\": 1,\n        \"sysArduinoTemperature\": 96.3\n    }",
+					"raw": {
+						"sysUserId": 1,
+						"sysArduinoTemperature": 96.3
+					},					  
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/temp/current/"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/temp/current/"
+			},
+			"response": []
+		},
+		{
+			"name": "Temperature current - create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": {
+						"sysUserId": 1,
+						"sysArduinoTemperature": 96.3
+					},					  
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/temp/current/withoutJWT/"
 			},
 			"response": []
 		},
@@ -922,7 +1824,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://52.168.171.226:3000/api/temp/current/user/1?startDate=2024-06-03&endDate=2024-08-03",
+					"raw": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/temp/current/user/1?startDate=2024-06-03&endDate=2024-08-03",
 					"protocol": "http",
 					"host": [
 						"52",
@@ -959,14 +1861,38 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"userFedFirstName\": \"Carrol\",\n  \"userFedSex\": \"M\",\n  \"userFedBirthLength\": 30,\n  \"userFedAge\": 20,\n  \"sysUserId\": 1,\n  \"sysArduinoLength\": 100\n}",
+					"raw": {
+						"sysUserId": 1,
+						"sysArduinoLength": 100
+					},					  
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://52.168.171.226:3000/api/length/current/"
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/length/current/"
+			},
+			"response": []
+		},
+		{
+			"name": "Length current - create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": {
+						"sysUserId": 1,
+						"sysArduinoLength": 100
+					},					  
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/length/current/withoutJWT/"
 			},
 			"response": []
 		},
@@ -976,7 +1902,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://52.168.171.226:3000/api/length/current/user/1?startDate=2024-06-03&endDate=2024-08-03",
+					"raw": "https://smartcribmainapp-djdsaff9a0cqcvh2.eastus-01.azurewebsites.net/api/length/current/user/1?startDate=2024-06-03&endDate=2024-08-03",
 					"protocol": "http",
 					"host": [
 						"52",

@@ -3,10 +3,11 @@ import {
   create,
   findAll,
   findOne,
+  findBySysUserId,
   update,
   deleteRecord,
   signin,
-  signout
+  signout,
 } from "../controllers/ecbUserRegistration.controller.js";
 import jwtAuth from "../jwtAuth.js"; // Import the JWT middleware
 
@@ -32,5 +33,8 @@ router.put("/:id", jwtAuth, update);
 
 // Delete one record by user id
 router.delete("/:id", jwtAuth, deleteRecord);
+
+// Get one record by sysUserId (Update this to sysUserId)
+router.get("/sysUserId/:sysUserId", jwtAuth, findBySysUserId);
 
 export default router;

@@ -199,11 +199,11 @@ router.post("/generateSolution", jwtAuth, addNewQuestion);
 router.post("/generateSolution/withoutJWT", addNewQuestion);
 
 // Update a record by ID
-router.put("/:id", jwtAuth, update);
-router.put("/withoutJWT/:id", update);
+router.put("/", jwtAuth, update);
+router.put("/withoutJWT/", update);
 
 // Delete a record by ID
-router.delete("/:id", jwtAuth, deleteRecord);
-router.delete("/withoutJWT/:id", deleteRecord);
+router.delete("/", jwtAuth, deleteRecord);
+router.delete("/withoutJWT/", deleteRecord);
 
 export default router;

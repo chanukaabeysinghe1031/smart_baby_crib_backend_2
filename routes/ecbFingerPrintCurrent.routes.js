@@ -174,12 +174,12 @@ import jwtAuth from "../jwtAuth.js"; // Import the JWT middleware
 const router = express.Router();
 
 // Retrieve all records by user id
-router.get("/user/:id", jwtAuth, findAllByUser);
-router.get("/user/withoutJWT/:id", findAllByUser);
+router.get("/:id", jwtAuth, findAllByUser);
+router.get("/withoutJWT/:id", findAllByUser);
 
 // Retrieve a single record by ID
-router.get("/:id", jwtAuth, findOne);
-router.get("/withoutJWT/:id", findOne);
+router.get("/user/:id", jwtAuth, findOne);
+router.get("/user/withoutJWT/:id", findOne);
 
 // Create a new record
 router.post("/", jwtAuth, create);

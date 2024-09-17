@@ -179,10 +179,10 @@ router.post("/", jwtAuth, create);
 router.get("/", jwtAuth, findAll);
 router.get("/:id", jwtAuth, findOne);
 
-router.put("/:id", jwtAuth, update);
-router.put("/withoutJWT/:id", update);
+router.put("/", jwtAuth, update);
+router.put("/withoutJWT/", update);
 
-router.delete("/:id", jwtAuth, deleteRecord);
-router.delete("/withoutJWT/:id", deleteRecord);
+router.delete("/", jwtAuth, deleteRecord);
+router.delete("/withoutJWT/", deleteRecord);
 
 export default router;
