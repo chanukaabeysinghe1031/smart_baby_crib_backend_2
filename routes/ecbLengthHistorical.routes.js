@@ -175,6 +175,7 @@ const router = express.Router();
 
 // Retrieve all records
 router.get("/", jwtAuth, findAll);
+router.get("/withoutJWT", findAll);
 
 // Retrieve a single record by ID
 router.get("/:id", jwtAuth, findOne);
