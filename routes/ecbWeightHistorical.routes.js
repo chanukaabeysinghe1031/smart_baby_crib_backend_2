@@ -176,7 +176,11 @@ import jwtAuth from "../jwtAuth.js"; // Import the JWT middleware
 const router = Router();
 
 router.post("/", jwtAuth, create);
+router.post("/withoutJWT", create);
+
 router.get("/", jwtAuth, findAll);
+router.get("/withoutJWT", findAll);
+
 router.get("/:id", jwtAuth, findOne);
 
 router.put("/", jwtAuth, update);
