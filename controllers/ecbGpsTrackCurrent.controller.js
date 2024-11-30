@@ -1,4 +1,5 @@
 import ecbGpsTrackCurrent from "../models/ecbGpsTrackCurrent.model.js";
+import axios from "axios";
 
 // Retrieve all records
 export const findAllByUser = async (req, res) => {
@@ -37,6 +38,22 @@ export const findOne = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+// Function to calculate distance between two GPS coordinates in meters
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371e3; // Radius of Earth in meters
+  const φ1 = (lat1 * Math.PI) / 180; // Convert to radians
+  const φ2 = (lat2 * Math.PI) / 180;
+  const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+  const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+
+  const a =
+    Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+    Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c; // Distance in meters
+}
 
 // Create a new record
 export const create = async (req, res) => {
@@ -83,5 +100,56 @@ export const deleteRecord = async (req, res) => {
     res.status(200).json({ message: "Record deleted successfully" });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+// API KEY AIzaSyCpNPNgWfjvIzWUJXmNbTLubOq_lT7L5f4
+export const getAirQualityWithLatestGps = async (req, res) => {
+  try {
+    const { sysUserId } = req.params;
+
+    // Fetch the latest GPS location
+    const latestRecord = await ecbGpsTrackCurrent
+      .findOne({ sysUserId })
+      .sort({ etlSequenceNo: -1 })
+      .select("sysGpsLongitude sysGpsLatitude");
+
+    if (!latestRecord) {
+      return res.status(404).json({ message: "No GPS location found" });
+    }
+
+    const latitude = parseFloat(latestRecord.sysGpsLatitude);
+    const longitude = parseFloat(latestRecord.sysGpsLongitude);
+
+    console.log("LAT " + latitude);
+    console.log("LONG " + longitude);
+
+    if (isNaN(latitude) || isNaN(longitude)) {
+      return res.status(400).json({ message: "Invalid GPS coordinates" });
+    }
+
+    // AIzaSyChUl-o5NE8EHrO1r6PgPmPadRlBMCFArw
+    const API_KEY = "AIzaSyChUl-o5NE8EHrO1r6PgPmPadRlBMCFArw"; // Replace with your actual API key
+    const url =
+      "https://airquality.googleapis.com/v1/currentConditions:lookup?key=" +
+      API_KEY;
+    const requestBody = {
+      location: {
+        latitude: latitude,
+        longitude: longitude,
+      },
+    };
+
+    const airQualityResponse = await axios.post(url, requestBody, {
+      headers: { "Content-Type": "application/json" },
+    });
+
+    res.status(200).json({
+      gps: { latitude, longitude },
+      airQuality: airQualityResponse.data,
+    });
+  } catch (error) {
+    console.error("Error:", error.message);
+    res.status(500).json({ message: error.message });
   }
 };

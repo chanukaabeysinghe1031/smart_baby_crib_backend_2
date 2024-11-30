@@ -16,6 +16,8 @@ const ecbUserRegisterationSchema = new mongoose.Schema(
     userFedStrollerModelNo: { type: String, required: true },
     userFedEmailAddress: { type: String, required: true },
     userFedPassword: { type: String, required: true },
+    passwordResetCode: { type: Number },
+    passwordResetExpires: { type: Date },
   },
   { timestamps: true }
 );

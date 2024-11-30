@@ -15,16 +15,20 @@ import ecbTempCurrent from "./routes/ecbTempCurrent.routes.js";
 import ecbAINanny from "./routes/ecbAINanny.routes.js";
 import ecbGpsTrackCurrent from "./routes/ecbGpsTrackCurrent.routes.js";
 import ecbFingerPrintCurrent from "./routes/ecbFingerPrintCurrent.routes.js";
+import ecbAINotes from "./routes/ecbAINotes.routes.js";
 
 dotenv.config();
 
 const app = express();
 // Connect to MongoDB
 mongoose
-  .connect("mongodb+srv://admin:admin@cluster0.yk4m9vr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(
+    "mongodb+srv://admin:admin@cluster0.yk4m9vr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
   .then(() => {
     console.log("Connected to MongoDB Atlas");
   })
@@ -35,19 +39,6 @@ app.use(bodyParser.json());
 
 // Swagger documentation setup
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-// Middleware for JWT token authentication
-const jwtAuth = (req, res, next) => {
-  const token = req.header("X-API-TOKEN");
-
-  if (token !== process.env.API_TOKEN) {
-    return res.status(403).json({
-      message: "Authentication failed. Invalid or missing API token.",
-    });
-  }
-
-  next();
-};
 
 app.use("/api/user", ecbUserRegistration);
 app.use("/api/weight/current", ecbWeightCurrent);
@@ -60,6 +51,7 @@ app.use("/api/length/current", ecbLengthCurrent);
 app.use("/api/ainanny", ecbAINanny);
 app.use("/api/weight/historical", ecbWeightHistorical);
 app.use("/api/temp/historical", ecbTempHistorical);
+app.use("/api/notes", ecbAINotes);
 
 if (process.env.NODE_ENV !== "test") {
   const PORT = process.env.PORT || 3000;

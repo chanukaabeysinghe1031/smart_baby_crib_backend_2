@@ -8,33 +8,27 @@ import {
   deleteRecord,
   signin,
   signout,
+  forgotPassword,
+  resetPassword,
+  contactSupport,
 } from "../controllers/ecbUserRegistration.controller.js";
 import jwtAuth from "../jwtAuth.js"; // Import the JWT middleware
 
 const router = Router();
 
-// Create new record
-router.post("/", create);
-
-// signin
+// Specific routes
 router.post("/signin", signin);
-
-// signout
 router.post("/signout", signout);
+router.post("/forgotPassword", forgotPassword);
+router.post("/resetPassword", resetPassword);
+router.post("/contact-support", jwtAuth, contactSupport);
 
-// Get all records
+// General CRUD routes
+router.post("/", create);
 router.get("/", jwtAuth, findAll);
-
-// Get one record by user id
-router.get("/:id", jwtAuth, findOne);
-
-// Update one record by user id
-router.put("/:id", jwtAuth, update);
-
-// Delete one record by user id
-router.delete("/:id", jwtAuth, deleteRecord);
-
-// Get one record by sysUserId (Update this to sysUserId)
 router.get("/sysUserId/:sysUserId", jwtAuth, findBySysUserId);
+router.get("/:id", jwtAuth, findOne);
+router.put("/:id", jwtAuth, update);
+router.delete("/:id", jwtAuth, deleteRecord);
 
 export default router;

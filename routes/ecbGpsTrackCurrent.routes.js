@@ -168,6 +168,7 @@ import {
   findOne,
   update,
   deleteRecord,
+  getAirQualityWithLatestGps,
 } from "../controllers/ecbGpsTrackCurrent.controller.js";
 import jwtAuth from "../jwtAuth.js"; // Import the JWT middleware
 
@@ -176,6 +177,7 @@ const router = express.Router();
 // Retrieve all records by user id
 router.get("/user/:id", jwtAuth, findAllByUser);
 router.get("/user/withoutJWT/:id", findAllByUser);
+router.get("/air-quality/:sysUserId", jwtAuth, getAirQualityWithLatestGps);
 
 // Retrieve a single record by ID
 router.get("/:id", jwtAuth, findOne);

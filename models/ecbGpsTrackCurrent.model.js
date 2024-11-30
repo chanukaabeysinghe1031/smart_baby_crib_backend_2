@@ -7,6 +7,7 @@ const ecbGpsTrackCurrentSchema = new mongoose.Schema(
     sysUserId: { type: Number, required: true },
     sysGpsLongitude: { type: String, required: true },
     sysGpsLatitude: { type: String, required: true },
+    numberOfWalks: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

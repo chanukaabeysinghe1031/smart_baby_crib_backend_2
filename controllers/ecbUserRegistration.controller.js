@@ -2,7 +2,10 @@ import ecbUserRegistration from "../models/ecbUserRegistration.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-
+import qrcode from "qrcode";
+import nodemailer from "nodemailer";
+import { CourierClient } from "@trycourier/courier";
+import crypto from "crypto";
 // Sign-in route
 export const signin = async (req, res) => {
   const { email, password } = req.body;
@@ -33,6 +36,9 @@ export const signin = async (req, res) => {
       }
     );
 
+    // Generate QR code with the token
+    const qrCode = await qrcode.toDataURL(token);
+
     // Set the JWT token as an HTTP-only cookie
     res.cookie("token", token, {
       httpOnly: true, // Prevent JavaScript access to the cookie
@@ -44,6 +50,8 @@ export const signin = async (req, res) => {
     res.json({
       message: "Sign-in successful",
       user: user,
+      token: token,
+      qrCode: qrCode,
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
@@ -168,5 +176,158 @@ export const deleteRecord = async (req, res) => {
     res.status(200).json({ message: "Record deleted successfully" });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+export const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Check if the user exists
+    const user = await ecbUserRegistration.findOne({
+      userFedEmailAddress: email,
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Generate a 6-digit verification code
+    const verificationCode = crypto.randomInt(100000, 999999);
+    const codeExpiration = new Date(Date.now() + 60 * 60 * 1000); // 60 minutes
+
+    // Save the code and expiration in the user's document
+    user.passwordResetCode = verificationCode;
+    user.passwordResetExpires = codeExpiration;
+    await user.save();
+
+    // Initialize Courier client
+    const courier = new CourierClient({
+      authorizationToken: "pk_test_BJSBJPATXH42CEN5NEFXGFWD5RTZ",
+    });
+
+    // Send email using Courier
+    const emailResponse = await courier.send({
+      message: {
+        to: {
+          email: user.userFedEmailAddress,
+        },
+        content: {
+          title: "Password Reset Code",
+          body: `
+            Hi ${user.name || "User"},
+            
+            We received a request to reset your password. Use the code below to reset your password. This code is valid for 15 minutes.
+
+            **Code**: ${verificationCode}
+
+            If you did not request this, please ignore this email.
+
+            Best regards,  
+            The Smart Baby Crib Team
+          `,
+        },
+      },
+    });
+
+    console.log("Courier Email Response:", emailResponse);
+
+    // Return success response
+    res.status(200).json({
+      message: "Verification code sent successfully via email",
+    });
+  } catch (error) {
+    console.error("Error in forgotPassword:", error);
+    res
+      .status(500)
+      .json({ message: "Server error", error: error.message || error });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  const { email, code, newPassword } = req.body;
+
+  try {
+    // Find the user by email
+    const user = await ecbUserRegistration.findOne({
+      userFedEmailAddress: email,
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if the code is correct and not expired
+    if (
+      user.passwordResetCode !== parseInt(code, 10) ||
+      new Date() > user.passwordResetExpires
+    ) {
+      return res.status(400).json({ message: "Invalid or expired code" });
+    }
+
+    // Update the user's password and clear the reset fields
+    user.userFedPassword = newPassword;
+    user.passwordResetCode = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successful" });
+  } catch (error) {
+    console.error("Error in resetPassword:", error);
+    res
+      .status(500)
+      .json({ message: "Server error", error: error.message || error });
+  }
+};
+
+export const contactSupport = async (req, res) => {
+  const { email, contactNumber, message } = req.body;
+
+  try {
+    // Validate input
+    if (!email || !contactNumber || !message) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Initialize Courier client
+    const courier = new CourierClient({
+      authorizationToken: "pk_test_BJSBJPATXH42CEN5NEFXGFWD5RTZ",
+    });
+
+    // Send email using Courier
+    const emailResponse = await courier.send({
+      message: {
+        to: {
+          email: "abeysinghechanuka@gmail.com", // Replace with your support email
+        },
+        content: {
+          title: "Support Request",
+          body: `
+            A user has submitted a support request:
+
+            **User Details**:
+            - Email: ${email}
+            - Contact Number: ${contactNumber}
+
+            **Message**:
+            ${message}
+
+            Please respond to the user promptly.
+          `,
+        },
+      },
+    });
+
+    console.log("Courier Email Response:", emailResponse);
+
+    // Return success response
+    res.status(200).json({
+      message: "Support request sent successfully",
+    });
+  } catch (error) {
+    console.error("Error in contactSupport:", error);
+    res
+      .status(500)
+      .json({ message: "Server error", error: error.message || error });
   }
 };
