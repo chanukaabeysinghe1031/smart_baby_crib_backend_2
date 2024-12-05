@@ -59,6 +59,55 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 export const create = async (req, res) => {
   const data = new ecbGpsTrackCurrent(req.body);
   try {
+    const { sysUserId, sysGpsLatitude, sysGpsLongitude, etlDateTime } =
+      req.body;
+
+    // Parse incoming data
+    const newLatitude = parseFloat(sysGpsLatitude);
+    const newLongitude = parseFloat(sysGpsLongitude);
+    const newTimestamp = new Date(etlDateTime);
+
+    if (
+      isNaN(newLatitude) ||
+      isNaN(newLongitude) ||
+      isNaN(newTimestamp.getTime())
+    ) {
+      return res.status(400).json({ message: "Invalid GPS data or timestamp" });
+    }
+
+    // Fetch the last GPS record for the same user
+    const lastRecord = await ecbGpsTrackCurrent
+      .findOne({ sysUserId })
+      .sort({ etlSequenceNo: -1 })
+      .select("sysGpsLongitude sysGpsLatitude etlDateTime numberOfWalks");
+
+    let numberOfWalks = lastRecord?.numberOfWalks || 0;
+
+    if (lastRecord) {
+      const lastLatitude = parseFloat(lastRecord.sysGpsLatitude);
+      const lastLongitude = parseFloat(lastRecord.sysGpsLongitude);
+      const lastTimestamp = new Date(lastRecord.etlDateTime);
+
+      // Calculate distance between two GPS points
+      const distance = calculateDistance(
+        lastLatitude,
+        lastLongitude,
+        newLatitude,
+        newLongitude
+      );
+
+      // If the distance is greater than 5 meters, check time difference
+      if (distance > 5) {
+        const timeDifference = Math.abs(newTimestamp - lastTimestamp); // Difference in ms
+        if (timeDifference >= 30 * 60 * 1000) {
+          numberOfWalks += 1; // Increment walk count
+        }
+      }
+    }
+
+    // Save the new GPS record with updated walk count
+    data.numberOfWalks = numberOfWalks;
+
     const newData = await data.save();
     res.status(201).json(newData);
   } catch (err) {

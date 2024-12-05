@@ -2,8 +2,13 @@ import express from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
+import cors from "cors";
 import { swaggerUi, swaggerSpec } from "./swaggerConfig.js";
+import WebSocket from "ws";
+import mqtt from "mqtt";
+import { setupWebSocket, websocketRouter } from "./routes/websocket.routes.js";
 
+// Import Routes
 import ecbUserRegistration from "./routes/ecbUserRegistration.routes.js";
 import ecbDeviceRegistration from "./routes/ecbDeviceRegistration.routes.js";
 import ecbWeightHistorical from "./routes/ecbWeightHistorical.routes.js";
@@ -20,44 +25,41 @@ import ecbAINotes from "./routes/ecbAINotes.routes.js";
 dotenv.config();
 
 const app = express();
+const port = process.env.PORT || 3000;
+
 // Connect to MongoDB
 mongoose
-  .connect(
-    "mongodb+srv://admin:admin@cluster0.yk4m9vr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }
-  )
-  .then(() => {
-    console.log("Connected to MongoDB Atlas");
+  .connect(process.env.MONGODB || "your-mongo-uri", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
   })
-  .catch((err) => {
-    console.error("Error connecting to MongoDB Atlas", err);
-  });
-app.use(bodyParser.json());
+  .then(() => console.log("Connected to MongoDB Atlas"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
-// Swagger documentation setup
+// Middleware
+app.use(bodyParser.json());
+app.use(cors());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+// REST API Routes
 app.use("/api/user", ecbUserRegistration);
-app.use("/api/weight/current", ecbWeightCurrent);
-app.use("/api/length/historical", ecbLengthHistorical);
 app.use("/api/device", ecbDeviceRegistration);
+app.use("/api/weight/current", ecbWeightCurrent);
+app.use("/api/weight/historical", ecbWeightHistorical);
+app.use("/api/length/current", ecbLengthCurrent);
+app.use("/api/length/historical", ecbLengthHistorical);
+app.use("/api/temp/current", ecbTempCurrent);
+app.use("/api/temp/historical", ecbTempHistorical);
+app.use("/api/ainanny", ecbAINanny);
 app.use("/api/gps/current", ecbGpsTrackCurrent);
 app.use("/api/fingerprint/current", ecbFingerPrintCurrent);
-app.use("/api/temp/current", ecbTempCurrent);
-app.use("/api/length/current", ecbLengthCurrent);
-app.use("/api/ainanny", ecbAINanny);
-app.use("/api/weight/historical", ecbWeightHistorical);
-app.use("/api/temp/historical", ecbTempHistorical);
 app.use("/api/notes", ecbAINotes);
+app.use("/api/websocket", websocketRouter);
 
-if (process.env.NODE_ENV !== "test") {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
-}
+// Create HTTP Server
+const server = app.listen(port, () => {
+  console.log("Server is running on port ${port}");
+});
 
-export default app;
+// Setup WebSocket
+setupWebSocket(server);

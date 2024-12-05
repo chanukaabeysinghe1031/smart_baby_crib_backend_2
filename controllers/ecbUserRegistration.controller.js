@@ -6,6 +6,11 @@ import qrcode from "qrcode";
 import nodemailer from "nodemailer";
 import { CourierClient } from "@trycourier/courier";
 import crypto from "crypto";
+dotenv.config();
+
+const JWT_SECRET = process.env.JWT_SECRET;
+const COUREIER_TOKEN = process.env.COURIER_PROD_TOKEN;
+
 // Sign-in route
 export const signin = async (req, res) => {
   const { email, password } = req.body;
@@ -30,7 +35,7 @@ export const signin = async (req, res) => {
     // Create a JWT token valid for 8 hours
     const token = jwt.sign(
       { id: user._id, email: user.userFedEmailAddress },
-      "dsfdasfasdfdkllierrm339i&asfjl@fhdaskf#jhafshlkdkfhhaskldhfjdashnlwqjerheqhrekjrhekjqwhrejkqwrejqwj$kjsadkjfas",
+      JWT_SECRET,
       {
         expiresIn: "8h",
       }
@@ -203,7 +208,7 @@ export const forgotPassword = async (req, res) => {
 
     // Initialize Courier client
     const courier = new CourierClient({
-      authorizationToken: "pk_test_BJSBJPATXH42CEN5NEFXGFWD5RTZ",
+      authorizationToken: COUREIER_TOKEN,
     });
 
     // Send email using Courier
@@ -291,14 +296,14 @@ export const contactSupport = async (req, res) => {
 
     // Initialize Courier client
     const courier = new CourierClient({
-      authorizationToken: "pk_test_BJSBJPATXH42CEN5NEFXGFWD5RTZ",
+      authorizationToken: COUREIER_TOKEN,
     });
 
     // Send email using Courier
     const emailResponse = await courier.send({
       message: {
         to: {
-          email: "abeysinghechanuka@gmail.com", // Replace with your support email
+          email: "chawwa31@gmail.com", // Replace with your support email
         },
         content: {
           title: "Support Request",

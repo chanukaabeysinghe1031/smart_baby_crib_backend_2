@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const JWT_SECRET = process.env.JWT_SECRET;
+
 const jwtAuth = (req, res, next) => {
   const token = req.header("X-API-TOKEN");
 
@@ -14,10 +16,7 @@ const jwtAuth = (req, res, next) => {
 
   try {
     // Verify the token using the secret key
-    const decoded = jwt.verify(
-      token,
-      "dsfdasfasdfdkllierrm339i&asfjl@fhdaskf#jhafshlkdkfhhaskldhfjdashnlwqjerheqhrekjrhekjqwhrejkqwrejqwj$kjsadkjfas"
-    );
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded; // Save the decoded user info for later use
     next();
   } catch (error) {
