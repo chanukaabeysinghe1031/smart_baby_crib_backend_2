@@ -198,7 +198,7 @@ function sendCommand(command) {
 
 // REST API Routes
 // 1. Initialize Stroller
-router.post("/initialize", async (req, res) => {
+router.post("/initialize", jwtAuth, async (req, res) => {
   const { userId } = req.body;
 
   if (!userId) {
@@ -225,7 +225,7 @@ router.post("/initialize", async (req, res) => {
 });
 
 // 2. Set Stroller Mode
-router.post("/mode", async (req, res) => {
+router.post("/mode", jwtAuth, async (req, res) => {
   const { userId, mode } = req.body;
 
   // Validate the mode
@@ -283,7 +283,7 @@ router.post("/mode", async (req, res) => {
 });
 
 // 3. Set Stroller Speed
-router.post("/speed", async (req, res) => {
+router.post("/speed", jwtAuth, async (req, res) => {
   const { userId, speed } = req.body;
   console.log(`Received request to set speed to: ${speed} for user: ${userId}`);
 
@@ -337,7 +337,7 @@ router.post("/speed", async (req, res) => {
 });
 
 // 4. Reset Distance Counter
-router.post("/distance/reset", async (req, res) => {
+router.post("/distance/reset", jwtAuth, async (req, res) => {
   const { userId } = req.body;
   console.log("Received request to reset distance");
 
@@ -383,7 +383,7 @@ router.post("/distance/reset", async (req, res) => {
 });
 
 // 5. Halt Distance Tracking
-router.post("/distance/halt", async (req, res) => {
+router.post("/distance/halt", jwtAuth, async (req, res) => {
   const { userId } = req.body;
   console.log("Received request to halt distance tracking");
 
@@ -427,7 +427,7 @@ router.post("/distance/halt", async (req, res) => {
 });
 
 // 6. Resume Distance Tracking
-router.post("/distance/resume", async (req, res) => {
+router.post("/distance/resume", jwtAuth, async (req, res) => {
   const { userId } = req.body;
   console.log("Received request to resume distance tracking");
 
@@ -471,7 +471,7 @@ router.post("/distance/resume", async (req, res) => {
 });
 
 // 7. Get Current Distance
-router.get("/distance", async (req, res) => {
+router.get("/distance", jwtAuth, async (req, res) => {
   const { userId } = req.query; // Assuming userId is passed as a query parameter
   console.log("Received request to get current distance");
 
@@ -508,7 +508,7 @@ router.get("/distance", async (req, res) => {
 });
 
 // 8. Get Current Stroller Status
-router.get("/status", async (req, res) => {
+router.get("/status", jwtAuth, async (req, res) => {
   const { userId } = req.query; // Assuming userId is passed as a query parameter
   console.log("Received request to get stroller status");
 
@@ -546,7 +546,7 @@ router.get("/status", async (req, res) => {
 });
 
 // 9. Set Steering Value
-router.post("/steer", async (req, res) => {
+router.post("/steer", jwtAuth, async (req, res) => {
   const { userId, steering } = req.body; // Expecting userId and steering in the request body
   console.log(`Received steering command for user ${userId}: ${steering}`);
 
@@ -599,7 +599,7 @@ router.post("/steer", async (req, res) => {
 });
 
 // 10. Get Temperature and Humidity
-router.get("/temp_humidity", async (req, res) => {
+router.get("/temp_humidity", jwtAuth, async (req, res) => {
   const { userId } = req.query; // Expecting userId in the query parameters
 
   console.log(
@@ -641,7 +641,7 @@ router.get("/temp_humidity", async (req, res) => {
 });
 
 // 11. Set Remote Control (Phone or Ring)
-router.post("/remote", async (req, res) => {
+router.post("/remote", jwtAuth, async (req, res) => {
   const { userId, remote } = req.body;
 
   console.log(
