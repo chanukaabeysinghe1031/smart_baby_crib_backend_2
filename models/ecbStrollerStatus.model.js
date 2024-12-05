@@ -31,10 +31,10 @@ const strollerStatusSchema = new mongoose.Schema(
 strollerStatusSchema.pre("save", async function (next) {
   if (this.isNew) {
     const existingRecord = await this.constructor.findOne({
-      strollerId: this.strollerId,
+      userId: this.userId,
     });
     if (existingRecord) {
-      return next(new Error("Stroller ID must be unique"));
+      return next(new Error("User ID must be unique"));
     }
   }
   next();

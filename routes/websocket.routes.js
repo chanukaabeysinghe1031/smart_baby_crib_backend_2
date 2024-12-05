@@ -696,4 +696,49 @@ router.post("/remote", jwtAuth, async (req, res) => {
   }
 });
 
+// 12. Update Temperature and Humidity
+router.put("/temp_humidity", jwtAuth, async (req, res) => {
+  const { userId, temperature, humidity } = req.body; // Expecting these in the request body
+
+  console.log(
+    `Received request to update temperature and humidity for user ${userId}`
+  );
+
+  // Validate input
+  if (!userId || temperature == null || humidity == null) {
+    return res.status(400).send({
+      success: false,
+      message: "User ID, temperature, and humidity are required to update.",
+    });
+  }
+
+  try {
+    // Fetch existing stroller data for the user
+    const strollerData = await ecbStrollerStatus.findOne({ userId });
+
+    if (!strollerData) {
+      return res.status(404).send({
+        success: false,
+        message: "Stroller status not found for the provided user ID.",
+      });
+    }
+
+    // Update the temperature and humidity
+    strollerData.temperature = temperature;
+    strollerData.humidity = humidity;
+    await strollerData.save();
+
+    res.status(200).send({
+      success: true,
+      message: "Temperature and humidity updated successfully.",
+    });
+  } catch (error) {
+    console.error("Error updating temperature and humidity:", error.message);
+    res.status(500).send({
+      success: false,
+      message: "Failed to update temperature and humidity in the database.",
+    });
+  }
+});
+
 export { router as websocketRouter, setupWebSocket };
