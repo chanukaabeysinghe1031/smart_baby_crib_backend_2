@@ -198,6 +198,7 @@ function sendCommand(command) {
 
 // REST API Routes
 // 1. Initialize Stroller
+// 1. Initialize Stroller
 router.post("/initialize", jwtAuth, async (req, res) => {
   const { userId } = req.body;
 
@@ -209,6 +210,17 @@ router.post("/initialize", jwtAuth, async (req, res) => {
   }
 
   try {
+    // Check if a record with the userId already exists
+    const existingStroller = await checkIfStrollerExists(userId);
+
+    if (existingStroller) {
+      return res.status(400).send({
+        success: false,
+        message: "A stroller has already been initialized for this user.",
+      });
+    }
+
+    // Save initial status if no record exists
     const initializedStroller = await saveInitialStatus(userId);
     res.status(201).send({
       success: true,
@@ -228,6 +240,7 @@ router.post("/initialize", jwtAuth, async (req, res) => {
 router.post("/mode", jwtAuth, async (req, res) => {
   const { userId, mode } = req.body;
 
+  console.log("KKKKKKKKKK");
   // Validate the mode
   if (!["Manual", "Auto", "AutoStroll"].includes(mode)) {
     return res.status(400).send({
@@ -243,9 +256,9 @@ router.post("/mode", jwtAuth, async (req, res) => {
     });
   }
 
-  sendCommand({ type: "mode", value: mode, userId: userId });
-
   try {
+    sendCommand({ type: "mode", value: mode });
+
     // Find the existing stroller data by userId
     const strollerData = await ecbStrollerStatus.findOne({ userId });
 
@@ -259,25 +272,24 @@ router.post("/mode", jwtAuth, async (req, res) => {
     // Update the mode in memory
     strollerStatus.mode = mode;
 
-    // Publish the mode change to MQTT
-    // mqttClient.publish(
-    //   topics.commands,
-    //   JSON.stringify({ type: "mode", value: mode })
-    // );
+    // Broadcast the mode change to WebSocket clients
+    broadcastWS({
+      type: "modeChange",
+      data: {
+        mode,
+        message: "Stroller mode updated successfully",
+      },
+    });
 
-    // Update the mode in the database
-    strollerData.mode = mode;
-    await strollerData.save();
-
-    console.log(`Stroller mode updated to: ${mode} for user: ${userId}`);
-    res
-      .status(200)
-      .send({ success: true, message: "Mode updated successfully." });
+    res.status(200).send({
+      success: true,
+      message: "Stroller mode updated successfully.",
+    });
   } catch (error) {
     console.error("Error updating stroller mode:", error.message);
     res.status(500).send({
       success: false,
-      message: "Failed to update mode in the database.",
+      message: "Failed to update stroller mode.",
     });
   }
 });
@@ -286,8 +298,6 @@ router.post("/mode", jwtAuth, async (req, res) => {
 router.post("/speed", jwtAuth, async (req, res) => {
   const { userId, speed } = req.body;
   console.log(`Received request to set speed to: ${speed} for user: ${userId}`);
-
-  sendCommand({ type: "speed", value: speed });
 
   // Validate the speed
   if (![0, 7, 10, 15].includes(speed)) {
@@ -531,6 +541,8 @@ router.get("/status", jwtAuth, async (req, res) => {
       });
     }
 
+    sendCommand({ type: "status", value: strollerData, userId: userId });
+
     console.log(`Fetched stroller status for user: ${userId}`);
     res.status(200).send({
       success: true,
@@ -624,6 +636,8 @@ router.get("/temp_humidity", jwtAuth, async (req, res) => {
         message: "Stroller status not found for the provided user ID.",
       });
     }
+
+    sendCommand({ type: "StrollerData", value: strollerData, userId: userId });
 
     // Respond with temperature and humidity
     res.status(200).send({

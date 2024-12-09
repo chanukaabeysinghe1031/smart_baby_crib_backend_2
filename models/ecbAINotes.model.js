@@ -8,6 +8,7 @@ const ecbAINotesSchema = new mongoose.Schema(
     noteTitle: { type: String, required: true }, // Title of the note
     noteContent: { type: String, required: true }, // Content of the note
     noteCategory: { type: String }, // Optional category/tag for the note
+    noteDate: { type: Date, default: Date.now },
   },
   { timestamps: true } // Automatically adds createdAt and updatedAt timestamps
 );
