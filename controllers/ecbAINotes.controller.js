@@ -27,23 +27,39 @@ export const findAllNotesByUser = async (req, res) => {
 };
 
 // Create a new note
+// Create a new note
 export const createNote = async (req, res) => {
-  const { sysUserId, noteTitle, noteContent, noteCategory } = req.body;
+  const { sysUserId, noteTitle, noteContent, noteCategory, noteDate } =
+    req.body;
 
+  // Validate required fields
   if (!sysUserId || !noteTitle || !noteContent) {
     return res.status(400).json({
       message: "sysUserId, noteTitle, and noteContent are required",
     });
   }
 
+  // Validate the noteDate if provided
+  let formattedDate = new Date();
+  if (noteDate) {
+    const parsedDate = new Date(noteDate);
+    if (isNaN(parsedDate.getTime())) {
+      return res.status(400).json({ message: "Invalid noteDate format" });
+    }
+    formattedDate = parsedDate;
+  }
+
+  // Create a new note instance
   const newNote = new ecbAINotes({
     sysUserId,
     noteTitle,
     noteContent,
     noteCategory, // Optional
+    noteDate: formattedDate,
   });
 
   try {
+    // Save the note in the database
     const savedNote = await newNote.save();
     res.status(201).json(savedNote);
   } catch (err) {
