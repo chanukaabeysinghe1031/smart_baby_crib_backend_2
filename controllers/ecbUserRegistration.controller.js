@@ -6,6 +6,10 @@ import qrcode from "qrcode";
 import nodemailer from "nodemailer";
 import { CourierClient } from "@trycourier/courier";
 import crypto from "crypto";
+import ecbLengthCurrent from "../models/ecbLengthCurrent.model.js";
+import ecbWeightCurrent from "../models/ecbWeightCurrent.model.js";
+import ecbTempCurrent from "../models/ecbTempCurrent.model.js";
+
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -124,6 +128,23 @@ export const findBySysUserId = async (req, res) => {
 // Create a new record with an incremented sysUserId
 export const create = async (req, res) => {
   try {
+    const {
+      userFedEmailAddress,
+      userFedBirthHeight,
+      userFedBirthWeight,
+      userFedBirthTempr,
+      ...otherData
+    } = req.body;
+
+    // Check if a user with the same userFedEmailAddress already exists
+    const existingUser = await ecbUserRegistration
+      .findOne({ userFedEmailAddress })
+      .exec();
+
+    if (existingUser) {
+      return res.status(400).json({ message: "Email address already exists." });
+    }
+
     // Find the largest sysUserId
     const maxUser = await ecbUserRegistration
       .findOne()
@@ -135,12 +156,36 @@ export const create = async (req, res) => {
 
     // Create a new user with the incremented sysUserId
     const data = new ecbUserRegistration({
-      ...req.body,
+      ...otherData,
+      userFedBirthHeight,
+      userFedBirthWeight,
+      userFedEmailAddress,
+      userFedBirthTempr,
       sysUserId: newSysUserId,
     });
 
     // Save the new user
     const newData = await data.save();
+
+    const lengthData = new ecbLengthCurrent({
+      sysUserId: sysUserId,
+      sysArduinoLength: userFedBirthHeight,
+    });
+
+    const weightData = new ecbWeightCurrent({
+      sysUserId: sysUserId,
+      sysArduinoWeight: userFedBirthWeight,
+    });
+
+    const tempData = new ecbTempCurrent({
+      sysUserId: sysUserId,
+      sysArduinoTemperature: userFedBirthTempr,
+    });
+
+    const newLengthData = await lengthData.save();
+    const newWeightData = await weightData.save();
+    const newTempData = await tempData.save();
+
     res.status(201).json(newData);
   } catch (err) {
     res.status(400).json({ message: err.message });
