@@ -29,81 +29,6 @@ let strollerStatus = {
   steering: null,
 };
 
-// MQTT Topics
-const topics = {
-  gps: `stroller/gps`,
-  status: `stroller/status`,
-  tempHumidity: `stroller/temp_humidity`,
-  commands: `backend/commands`,
-};
-
-// Subscribe to stroller topics
-mqttClient.on("connect", () => {
-  console.log("Connected to MQTT broker");
-
-  const subscribeTopics = [topics.gps, topics.status, topics.tempHumidity];
-
-  subscribeTopics.forEach((topic) => {
-    mqttClient.subscribe(topic, (err) => {
-      if (!err) {
-        console.log(`Subscribed to ${topic} topic`);
-      } else {
-        console.error(`Subscription error for topic ${topic}:`, err);
-      }
-    });
-  });
-});
-
-// Handle MQTT connection errors
-mqttClient.on("error", (error) => {
-  console.error("MQTT Connection Error:", error);
-});
-
-mqttClient.on("reconnect", () => {
-  console.log("Reconnecting to MQTT broker...");
-});
-
-mqttClient.on("offline", () => {
-  console.log("MQTT client is offline");
-});
-
-const saveInitialStatus = async (userId) => {
-  try {
-    const data = new ecbStrollerStatus({ userId, ...strollerStatus });
-    const newData = await data.save();
-    return await data.save();
-  } catch (err) {
-    throw new Error(err.message);
-  }
-};
-
-// MQTT Subscription and Handlers
-mqttClient.on("connect", async () => {
-  console.log("Connected to MQTT broker");
-  const subscribeTopics = [topics.gps, topics.status, topics.tempHumidity];
-  subscribeTopics.forEach((topic) => mqttClient.subscribe(topic));
-});
-
-mqttClient.on("message", (topic, message) => {
-  const data = JSON.parse(message.toString());
-  if (topic === topics.gps) handleGPSData(data);
-  if (topic === topics.status) handleStatusUpdate(data);
-  if (topic === topics.tempHumidity) handleTempHumidityUpdate(data);
-});
-
-// Handle incoming MQTT messages from the stroller
-mqttClient.on("message", (topic, message) => {
-  console.log(`Received message on topic ${topic}: ${message.toString()}`);
-
-  if (topic === topics.gps) {
-    handleGPSData(JSON.parse(message.toString()));
-  } else if (topic === topics.status) {
-    handleStatusUpdate(JSON.parse(message.toString()));
-  } else if (topic === topics.tempHumidity) {
-    handleTempHumidityUpdate(JSON.parse(message.toString()));
-  }
-});
-
 // Handle incoming GPS data
 function handleGPSData({ latitude, longitude }) {
   console.log("Handling GPS data...");
@@ -198,7 +123,6 @@ function sendCommand(command) {
 
 // REST API Routes
 // 1. Initialize Stroller
-// 1. Initialize Stroller
 router.post("/initialize", jwtAuth, async (req, res) => {
   const { userId } = req.body;
 
@@ -210,6 +134,89 @@ router.post("/initialize", jwtAuth, async (req, res) => {
   }
 
   try {
+    const userExists = await UserModel.findById(userId); // Replace UserModel with your actual user model
+    if (!userExists) {
+      return res.status(404).send({
+        success: false,
+        message: "User ID does not exist.",
+      });
+    }
+
+    // MQTT Topics
+    const topics = {
+      gps: `stroller/${userId}/gps`,
+      status: `stroller/${userId}/status`,
+      tempHumidity: `stroller/${userId}/temp_humidity`,
+      commands: `backend/${userId}/commands`,
+    };
+
+    // Subscribe to stroller topics
+    mqttClient.on("connect", () => {
+      console.log("Connected to MQTT broker");
+
+      const subscribeTopics = [topics.gps, topics.status, topics.tempHumidity];
+
+      subscribeTopics.forEach((topic) => {
+        mqttClient.subscribe(topic, (err) => {
+          if (!err) {
+            console.log(`Subscribed to ${topic} topic`);
+          } else {
+            console.error(`Subscription error for topic ${topic}:`, err);
+          }
+        });
+      });
+    });
+
+    // Handle MQTT connection errors
+    mqttClient.on("error", (error) => {
+      console.error("MQTT Connection Error:", error);
+    });
+
+    mqttClient.on("reconnect", () => {
+      console.log("Reconnecting to MQTT broker...");
+    });
+
+    mqttClient.on("offline", () => {
+      console.log("MQTT client is offline");
+    });
+
+    const saveInitialStatus = async (userId) => {
+      try {
+        const data = new ecbStrollerStatus({ userId, ...strollerStatus });
+        const newData = await data.save();
+        return await data.save();
+      } catch (err) {
+        throw new Error(err.message);
+      }
+    };
+
+    // MQTT Subscription and Handlers
+    mqttClient.on("connect", async () => {
+      console.log("Connected to MQTT broker");
+      const subscribeTopics = [topics.gps, topics.status, topics.tempHumidity];
+      subscribeTopics.forEach((topic) => mqttClient.subscribe(topic));
+    });
+
+    mqttClient.on("message", (topic, message) => {
+      const data = JSON.parse(message.toString());
+      if (topic === topics.gps) handleGPSData(data);
+      if (topic === topics.status) handleStatusUpdate(data);
+      if (topic === topics.tempHumidity) handleTempHumidityUpdate(data);
+    });
+
+    // Handle incoming MQTT messages from the stroller
+    mqttClient.on("message", (topic, message) => {
+      console.log(`Received message on topic ${topic}: ${message.toString()}`);
+
+      if (topic === topics.gps) {
+        handleGPSData(JSON.parse(message.toString()));
+      } else if (topic === topics.status) {
+        handleStatusUpdate(JSON.parse(message.toString()));
+      } else if (topic === topics.tempHumidity) {
+        handleTempHumidityUpdate(JSON.parse(message.toString()));
+      }
+    });
+
     // Check if a record with the userId already exists
     const existingStroller = await checkIfStrollerExists(userId);
 
