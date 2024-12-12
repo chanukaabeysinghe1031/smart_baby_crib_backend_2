@@ -133,7 +133,12 @@ export const create = async (req, res) => {
       userFedBirthHeight,
       userFedBirthWeight,
       userFedBirthTempr,
-      ...otherData
+      userFedFirstName,
+      userFedBabyAge,
+      userFedBabyGender,
+      userFedStrollerModelNo,
+      userFedPassword,
+      userFedParentFirstName,
     } = req.body;
 
     // Check if a user with the same userFedEmailAddress already exists
@@ -154,31 +159,37 @@ export const create = async (req, res) => {
     // Set the new sysUserId to max + 1, or default to 1 if no users exist
     const newSysUserId = maxUser ? maxUser.sysUserId + 1 : 1;
 
+    console.log(newSysUserId);
     // Create a new user with the incremented sysUserId
     const data = new ecbUserRegistration({
-      ...otherData,
+      sysUserId: newSysUserId,
+      userFedParentFirstName,
+      userFedFirstName,
+      userFedBabyAge,
+      userFedBabyGender,
+      userFedStrollerModelNo,
+      userFedPassword,
       userFedBirthHeight,
       userFedBirthWeight,
       userFedEmailAddress,
       userFedBirthTempr,
-      sysUserId: newSysUserId,
     });
 
     // Save the new user
     const newData = await data.save();
 
     const lengthData = new ecbLengthCurrent({
-      sysUserId: sysUserId,
+      sysUserId: newSysUserId,
       sysArduinoLength: userFedBirthHeight,
     });
 
     const weightData = new ecbWeightCurrent({
-      sysUserId: sysUserId,
+      sysUserId: newSysUserId,
       sysArduinoWeight: userFedBirthWeight,
     });
 
     const tempData = new ecbTempCurrent({
-      sysUserId: sysUserId,
+      sysUserId: newSysUserId,
       sysArduinoTemperature: userFedBirthTempr,
     });
 
@@ -188,6 +199,7 @@ export const create = async (req, res) => {
 
     res.status(201).json(newData);
   } catch (err) {
+    console.log(err.message);
     res.status(400).json({ message: err.message });
   }
 };
