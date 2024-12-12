@@ -257,8 +257,6 @@ router.post("/mode", jwtAuth, async (req, res) => {
   }
 
   try {
-    sendCommand({ type: "mode", value: mode });
-
     // Find the existing stroller data by userId
     const strollerData = await ecbStrollerStatus.findOne({ userId });
 
@@ -277,6 +275,7 @@ router.post("/mode", jwtAuth, async (req, res) => {
       type: "modeChange",
       data: {
         mode,
+        userId,
         message: "Stroller mode updated successfully",
       },
     });
@@ -326,13 +325,19 @@ router.post("/speed", jwtAuth, async (req, res) => {
     // Update the speed in memory
     strollerStatus.speed = speed;
 
-    // Publish the speed change to MQTT
-    sendCommand({ type: "speed", value: speed, userId: userId });
-
     // Update the speed in the database
     strollerData.speed = speed;
     await strollerData.save();
 
+    // Broadcast the mode change to WebSocket clients
+    broadcastWS({
+      type: "speedChange",
+      data: {
+        speed,
+        userId,
+        message: "Stroller speed updated successfully",
+      },
+    });
     console.log(`Stroller speed updated to: ${speed} for user: ${userId}`);
     res
       .status(200)
@@ -357,6 +362,15 @@ router.post("/distance/reset", jwtAuth, async (req, res) => {
       message: "User ID is required to reset the distance.",
     });
   }
+  // Broadcast the mode change to WebSocket clients
+  broadcastWS({
+    type: "resetDistance",
+    data: {
+      distance: 0,
+      userId,
+      message: "Stroller  distance reset successfully",
+    },
+  });
 
   try {
     // Fetch the existing stroller data using userId
@@ -404,6 +418,16 @@ router.post("/distance/halt", jwtAuth, async (req, res) => {
     });
   }
 
+  // Broadcast the mode change to WebSocket clients
+  broadcastWS({
+    type: "haltDistance",
+    data: {
+      halted: true,
+      userId,
+      message: "Tracking stroller  distance is halted successfully",
+    },
+  });
+
   try {
     // Fetch the existing stroller data using userId
     const strollerData = await ecbStrollerStatus.findOne({ userId });
@@ -447,6 +471,16 @@ router.post("/distance/resume", jwtAuth, async (req, res) => {
       message: "User ID is required to resume distance tracking.",
     });
   }
+
+  // Broadcast the mode change to WebSocket clients
+  broadcastWS({
+    type: "resumeDistance",
+    data: {
+      halted: false,
+      userId,
+      message: "Tracking stroller  distance is resumed successfully",
+    },
+  });
 
   try {
     // Fetch the existing stroller data using userId
@@ -503,6 +537,16 @@ router.get("/distance", jwtAuth, async (req, res) => {
       });
     }
 
+    // Broadcast the mode change to WebSocket clients
+    broadcastWS({
+      type: "getDistance",
+      data: {
+        distance: strollerData.distance || 0,
+        userId,
+        message: "Stroller  distance is received successfully",
+      },
+    });
+
     console.log(`Fetched distance for user: ${userId}`);
     res.status(200).send({
       success: true,
@@ -541,7 +585,15 @@ router.get("/status", jwtAuth, async (req, res) => {
       });
     }
 
-    sendCommand({ type: "status", value: strollerData, userId: userId });
+    // Broadcast the mode change to WebSocket clients
+    broadcastWS({
+      type: "getStatus",
+      data: {
+        status: strollerData.status || null,
+        userId,
+        message: "Stroller  status is received successfully",
+      },
+    });
 
     console.log(`Fetched stroller status for user: ${userId}`);
     res.status(200).send({
@@ -577,6 +629,16 @@ router.post("/steer", jwtAuth, async (req, res) => {
       .status(400)
       .send({ success: false, message: "Invalid steering value" });
   }
+
+  // Broadcast the mode change to WebSocket clients
+  broadcastWS({
+    type: "setSteering",
+    data: {
+      steering: steering,
+      userId,
+      message: "Stroller  steering is set successfully",
+    },
+  });
 
   try {
     // Fetch existing stroller data for the user
@@ -633,11 +695,21 @@ router.get("/temp_humidity", jwtAuth, async (req, res) => {
     if (!strollerData) {
       return res.status(404).send({
         success: false,
-        message: "Stroller status not found for the provided user ID.",
+        message: "Stroller data not found for the provided user ID.",
       });
     }
 
-    sendCommand({ type: "StrollerData", value: strollerData, userId: userId });
+    // Broadcast the mode change to WebSocket clients
+    broadcastWS({
+      type: "getTempHumidity",
+      data: {
+        temperature: strollerData.temperature,
+        humidity: strollerData.humidity,
+        userId,
+        message:
+          "Stroller  temperature and humidity are received successfully.",
+      },
+    });
 
     // Respond with temperature and humidity
     res.status(200).send({
@@ -692,8 +764,15 @@ router.post("/remote", jwtAuth, async (req, res) => {
     strollerData.remote = remote;
     await strollerData.save();
 
-    // Optionally send a command to the hardware
-    sendCommand({ type: "remote", value: remote, userId: userId });
+    // Broadcast the mode change to WebSocket clients
+    broadcastWS({
+      type: "setRemote",
+      data: {
+        remote: remote,
+        userId,
+        message: "Stroller remote method set successfully.",
+      },
+    });
 
     console.log(`Remote control updated to: ${remote} for user ${userId}`);
     res.status(200).send({
@@ -725,6 +804,17 @@ router.put("/temp_humidity", jwtAuth, async (req, res) => {
       message: "User ID, temperature, and humidity are required to update.",
     });
   }
+
+  // Broadcast the mode change to WebSocket clients
+  broadcastWS({
+    type: "setTempHumidity",
+    data: {
+      temperature,
+      humidity,
+      userId,
+      message: "Stroller temperature and hunidity set successfully.",
+    },
+  });
 
   try {
     // Fetch existing stroller data for the user
