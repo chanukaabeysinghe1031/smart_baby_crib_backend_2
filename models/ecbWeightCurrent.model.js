@@ -7,6 +7,7 @@ const ecbWeightCurrentSchema = new mongoose.Schema(
     etlSequenceNo: { type: Number },
     sysUserId: { type: Number, required: true },
     sysArduinoWeight: { type: Number, required: true },
+    currentAge: { type: Number },
   },
   { timestamps: true }
 );

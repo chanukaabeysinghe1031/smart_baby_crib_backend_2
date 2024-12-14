@@ -180,16 +180,19 @@ export const create = async (req, res) => {
 
     const lengthData = new ecbLengthCurrent({
       sysUserId: newSysUserId,
+      currentAge: 0,
       sysArduinoLength: userFedBirthHeight,
     });
 
     const weightData = new ecbWeightCurrent({
       sysUserId: newSysUserId,
+      currentAge: 0,
       sysArduinoWeight: userFedBirthWeight,
     });
 
     const tempData = new ecbTempCurrent({
       sysUserId: newSysUserId,
+      currentAge: 0,
       sysArduinoTemperature: userFedBirthTempr,
     });
 

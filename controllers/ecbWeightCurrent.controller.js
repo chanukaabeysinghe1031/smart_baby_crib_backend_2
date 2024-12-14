@@ -17,8 +17,6 @@ export const findAllByUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const { userFedBabyAge, createdAt } = user;
-
     const query = {
       etlDateTime: {
         $gte: start,
@@ -28,24 +26,7 @@ export const findAllByUser = async (req, res) => {
     };
 
     const data = await ecbWeightCurrent.find(query);
-    // Calculate the current age for each record
-    const dataWithCurrentAge = data.map((record) => {
-      const lengthCreatedAt = new Date(record.createdAt);
-      console.log(
-        "CURRENT : " +
-          (Date.now() - createdAt.getTime()) / (365.25 * 24 * 60 * 60 * 1000)
-      );
-      const currentAge =
-        userFedBabyAge +
-        Math.floor(
-          (new Date(lengthCreatedAt).getTime() -
-            new Date(createdAt).getTime()) /
-            (30.4375 * 24 * 60 * 60 * 1000)
-        ); // Add years since registration
-      return { ...record._doc, currentAge }; // Include the current age in the response
-    });
-
-    res.status(200).json(dataWithCurrentAge);
+    res.status(200).json(data);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -67,7 +48,28 @@ export const findOne = async (req, res) => {
 // Create a new record
 export const create = async (req, res) => {
   const data = new ecbWeightCurrent(req.body);
+  const { sysUserId } = req.body;
+
   try {
+    // Find the user by sysUserId
+    const user = await ecbUserRegisteration.findOne({ sysUserId: sysUserId });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const { userFedBabyAge, createdAt } = user;
+
+    // Calculate the current age
+    const lengthCreatedAt = new Date(); // Assuming current date as length record creation
+
+    const monthsSinceRegistration = Math.floor(
+      (lengthCreatedAt.getTime() - new Date(createdAt).getTime()) /
+        (30.4375 * 24 * 60 * 60 * 1000)
+    );
+    const currentAge = userFedBabyAge + monthsSinceRegistration;
+
+    // Add currentAge to the record
+    data.currentAge = currentAge;
     const newData = await data.save();
     res.status(201).json(newData);
   } catch (err) {

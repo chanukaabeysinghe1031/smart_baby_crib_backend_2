@@ -7,6 +7,7 @@ const ecbTempCurrentSchema = new mongoose.Schema(
     etlSequenceNo: { type: Number },
     sysUserId: { type: Number, required: true },
     sysArduinoTemperature: { type: Number, required: true },
+    currentAge: { type: Number },
   },
   { timestamps: true }
 );

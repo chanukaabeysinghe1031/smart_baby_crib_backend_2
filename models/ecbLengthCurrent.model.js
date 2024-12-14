@@ -8,6 +8,7 @@ const ecbLengthCurrentSchema = new mongoose.Schema(
     sysUserId: { type: Number, required: true },
     sysArduinoLength: { type: Number, required: true },
     sysAvgExpectedLength: { type: Number },
+    currentAge: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
