@@ -1,4 +1,5 @@
 import ecbDeviceRegistration from "../models/ecbDeviceRegistration.model.js";
+import ecbUserRegistration from "../models/ecbUserRegistration.model.js";
 
 // Retrieve all records
 export const findAll = async (req, res) => {
@@ -28,7 +29,19 @@ export const findOne = async (req, res) => {
 // Create a new record
 export const create = async (req, res) => {
   const data = new ecbDeviceRegistration(req.body);
+  const { sysUserId } = req.body;
   try {
+    // Find the user by email
+    const user = await ecbUserRegistration.findOne({
+      sysUserId: sysUserId,
+    });
+
+    if (user) {
+      return res
+        .status(404)
+        .json({ message: "A device has been already created by the user id." });
+    }
+
     const newData = await data.save();
     res.status(201).json(newData);
   } catch (err) {
