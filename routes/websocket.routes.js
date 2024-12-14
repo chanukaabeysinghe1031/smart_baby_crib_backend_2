@@ -266,6 +266,15 @@ router.post("/mode", jwtAuth, async (req, res) => {
       message: "User ID is required to update the stroller mode.",
     });
   }
+  // Broadcast the mode change to WebSocket clients
+  broadcastWS({
+    type: "modeChange",
+    data: {
+      mode,
+      userId,
+      message: "Stroller mode updated successfully",
+    },
+  });
 
   try {
     // Find the existing stroller data by userId
@@ -280,16 +289,6 @@ router.post("/mode", jwtAuth, async (req, res) => {
 
     // Update the mode in memory
     strollerStatus.mode = mode;
-
-    // Broadcast the mode change to WebSocket clients
-    broadcastWS({
-      type: "modeChange",
-      data: {
-        mode,
-        userId,
-        message: "Stroller mode updated successfully",
-      },
-    });
 
     res.status(200).send({
       success: true,
