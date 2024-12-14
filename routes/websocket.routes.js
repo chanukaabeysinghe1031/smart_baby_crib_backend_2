@@ -4,6 +4,7 @@ import mqtt from "mqtt";
 import WebSocket from "ws";
 import ecbStrollerStatus from "../models/ecbStrollerStatus.model.js";
 import jwtAuth from "../jwtAuth.js"; // Import the JWT middleware
+import ecbUserRegistration from "../models/ecbUserRegistration.model.js";
 
 const router = express.Router();
 
@@ -134,7 +135,7 @@ router.post("/initialize", jwtAuth, async (req, res) => {
   }
 
   try {
-    const userExists = await UserModel.findById(userId); // Replace UserModel with your actual user model
+    const userExists = await ecbUserRegistration.findOne({ sysUserId: userId }); // Replace UserModel with your actual user model
     if (!userExists) {
       return res.status(404).send({
         success: false,
@@ -142,12 +143,14 @@ router.post("/initialize", jwtAuth, async (req, res) => {
       });
     }
 
+    const { strollerId } = userExists;
+
     // MQTT Topics
     const topics = {
-      gps: `stroller/${userId}/gps`,
-      status: `stroller/${userId}/status`,
-      tempHumidity: `stroller/${userId}/temp_humidity`,
-      commands: `backend/${userId}/commands`,
+      gps: `stroller/${strollerId}/gps`,
+      status: `stroller/${strollerId}/status`,
+      tempHumidity: `stroller/${strollerId}/temp_humidity`,
+      commands: `backend/${strollerId}/commands`,
     };
 
     // Subscribe to stroller topics
@@ -218,12 +221,13 @@ router.post("/initialize", jwtAuth, async (req, res) => {
     });
 
     // Check if a record with the userId already exists
-    const existingStroller = await checkIfStrollerExists(userId);
-
-    if (existingStroller) {
-      return res.status(400).send({
+    const strollerExists = await ecbStrollerStatus.findOne({
+      sysUserId: userId,
+    }); // Replace UserModel with your actual user model
+    if (!strollerExists) {
+      return res.status(404).send({
         success: false,
-        message: "A stroller has already been initialized for this user.",
+        message: "Stroller has been already initialized.",
       });
     }
 
