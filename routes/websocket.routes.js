@@ -224,7 +224,7 @@ router.post("/initialize", jwtAuth, async (req, res) => {
     const strollerExists = await ecbStrollerStatus.findOne({
       sysUserId: userId,
     }); // Replace UserModel with your actual user model
-    if (!strollerExists) {
+    if (strollerExists) {
       return res.status(404).send({
         success: false,
         message: "Stroller has been already initialized.",
