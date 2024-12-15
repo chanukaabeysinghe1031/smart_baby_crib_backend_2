@@ -140,7 +140,7 @@ async function handleGPSData({ latitude, longitude }, userId) {
   }
 }
 
-async function handleStatusUpdate({ status, status }) {
+async function handleStatusUpdate({ status, userId }) {
   try {
     console.log("SAVING STROLLER STATUS FROM DEVICE");
     const strollerStatus = await ecbStrollerStatus.findOne({ userId });
@@ -152,7 +152,7 @@ async function handleStatusUpdate({ status, status }) {
   }
 }
 
-async function handleTempHumidityUpdate({ temperature, humidity }) {
+async function handleTempHumidityUpdate({ temperature, humidity }, userId) {
   console.log("SAVING STROLLER STATUS FROM DEVICE");
   try {
     const strollerStatus = await ecbStrollerStatus.findOne({ userId });
@@ -291,8 +291,8 @@ router.post("/initialize", jwtAuth, async (req, res) => {
     mqttClient.on("message", (topic, message) => {
       const data = JSON.parse(message.toString());
       if (topic === topics.gps) handleGPSData(data, userId);
-      if (topic === topics.status) handleStatusUpdate(data);
-      if (topic === topics.tempHumidity) handleTempHumidityUpdate(data);
+      if (topic === topics.status) handleStatusUpdate(data, userId);
+      if (topic === topics.tempHumidity) handleTempHumidityUpdate(data, userId);
     });
 
     // Handle incoming MQTT messages from the stroller
