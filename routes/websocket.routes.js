@@ -5,6 +5,7 @@ import WebSocket from "ws";
 import ecbStrollerStatus from "../models/ecbStrollerStatus.model.js";
 import jwtAuth from "../jwtAuth.js"; // Import the JWT middleware
 import ecbUserRegistration from "../models/ecbUserRegistration.model.js";
+import ecbGpsTrackCurrent from "../models/ecbGpsTrackCurrent.model.js";
 
 const router = express.Router();
 
@@ -28,54 +29,141 @@ let strollerStatus = {
   temperature: null,
   humidity: null,
   steering: null,
+  walk: 0,
 };
 
 // Handle incoming GPS data
-function handleGPSData({ latitude, longitude }) {
-  console.log("Handling GPS data...");
-  if (strollerStatus.halted) {
-    console.log("Distance tracking is halted. Ignoring GPS data.");
-    return;
-  }
+async function handleGPSData({ latitude, longitude }, userId) {
+  console.log("SAVING GPS DATA FROM DEVICE");
+  try {
+    const strollerStatus = await ecbStrollerStatus.findOne({ userId });
 
-  const gpsHistory = strollerStatus.gpsHistory;
-  if (gpsHistory.length > 0) {
-    const lastLocation = gpsHistory[gpsHistory.length - 1];
-    const distance = calculateDistance(
-      lastLocation.latitude,
-      lastLocation.longitude,
-      latitude,
-      longitude
+    if (!strollerData) {
+      return res.status(404).send({
+        success: false,
+        message: "Stroller data not found for the provided user ID.",
+      });
+    }
+
+    console.log("Handling GPS data...");
+    if (strollerStatus.halted) {
+      console.log("Distance tracking is halted. Ignoring GPS data.");
+      return;
+    }
+
+    const gpsHistory = strollerStatus.gpsHistory;
+    if (gpsHistory.length > 0) {
+      const lastLocation = gpsHistory[gpsHistory.length - 1];
+      const distance = calculateDistance(
+        lastLocation.latitude,
+        lastLocation.longitude,
+        latitude,
+        longitude
+      );
+      strollerStatus.distance += distance; // Add calculated distance
+    } else {
+      console.log("GPS history is empty. This is the first data point.");
+    }
+
+    gpsHistory.push({ latitude, longitude });
+    strollerStatus.gpsHistory = gpsHistory.slice(-50); // Keep last 50 locations for efficiency
+
+    console.log(`GPS Data: Lat=${latitude}, Lon=${longitude}`);
+    console.log(
+      `Updated Distance: ${strollerStatus.distance.toFixed(2)} meters`
     );
-    strollerStatus.distance += distance; // Add calculated distance
-  } else {
-    console.log("GPS history is empty. This is the first data point.");
+
+    // ================================================================
+    // TODO SAVE NUMBER OF WALKS
+    // ================================================================
+    // Parse incoming data
+    const newLatitude = parseFloat(latitude);
+    const newLongitude = parseFloat(longitude);
+    const currentDateTime = new Date();
+    const newGPSTrackData = new ecbGpsTrackCurrent({
+      sysUserId: userId,
+      sysGpsLongitude: latitude,
+      sysGpsLatitude: longitude,
+      etlDateTime: currentDateTime,
+    });
+
+    // Fetch the last GPS record for the same user
+    const lastRecord = await ecbGpsTrackCurrent
+      .findOne({ userId })
+      .sort({ etlSequenceNo: -1 })
+      .select("sysGpsLongitude sysGpsLatitude etlDateTime numberOfWalks");
+
+    let numberOfWalks = lastRecord?.numberOfWalks || 0;
+
+    if (lastRecord) {
+      const lastLatitude = parseFloat(lastRecord.sysGpsLatitude);
+      const lastLongitude = parseFloat(lastRecord.sysGpsLongitude);
+      const lastTimestamp = new Date(lastRecord.etlDateTime);
+
+      // Calculate distance between two GPS points
+      const distance = calculateDistance(
+        lastLatitude,
+        lastLongitude,
+        newLatitude,
+        newLongitude
+      );
+
+      // If the distance is greater than 5 meters, check time difference
+      if (distance > 5) {
+        const timeDifference = Math.abs(newTimestamp - lastTimestamp); // Difference in ms
+        if (timeDifference >= 30 * 60 * 1000) {
+          numberOfWalks += 1; // Increment walk count
+        }
+      }
+    }
+
+    // Save the new GPS record with updated walk count
+    newGPSTrackData.numberOfWalks = numberOfWalks;
+    newGPSTrackData.save();
+    strollerStatus.numberOfWalks = numberOfWalks;
+
+    // ================================================================
+    // Find the existing stroller data by userId
+    await strollerStatus.save();
+
+    // Broadcast the updated distance and GPS data to WebSocket clients
+    broadcastWS({
+      type: "update",
+      data: {
+        latitude,
+        longitude,
+        distance: strollerStatus.distance,
+      },
+    });
+  } catch (error) {
+    console.error("Error saving GPS data:", error.message);
   }
-
-  gpsHistory.push({ latitude, longitude });
-  strollerStatus.gpsHistory = gpsHistory.slice(-50); // Keep last 50 locations for efficiency
-
-  console.log(`GPS Data: Lat=${latitude}, Lon=${longitude}`);
-  console.log(`Updated Distance: ${strollerStatus.distance.toFixed(2)} meters`);
-
-  // Broadcast the updated distance and GPS data to WebSocket clients
-  broadcastWS({
-    type: "update",
-    data: {
-      latitude,
-      longitude,
-      distance: strollerStatus.distance,
-    },
-  });
 }
 
-function handleStatusUpdate({ status }) {
-  strollerStatus.status = status;
+async function handleStatusUpdate({ status, status }) {
+  try {
+    console.log("SAVING STROLLER STATUS FROM DEVICE");
+    const strollerStatus = await ecbStrollerStatus.findOne({ userId });
+
+    strollerStatus.status = status;
+    await strollerStatus.save();
+  } catch (error) {
+    console.error("Error saving status:", error.message);
+  }
 }
 
-function handleTempHumidityUpdate({ temperature, humidity }) {
-  strollerStatus.temperature = temperature;
-  strollerStatus.humidity = humidity;
+async function handleTempHumidityUpdate({ temperature, humidity }) {
+  console.log("SAVING STROLLER STATUS FROM DEVICE");
+  try {
+    const strollerStatus = await ecbStrollerStatus.findOne({ userId });
+
+    strollerStatus.temperature = temperature;
+    strollerStatus.humidity = humidity;
+
+    await strollerStatus.save();
+  } catch (error) {
+    console.error("Error saving temperature and humidty:", error.message);
+  }
 }
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -147,10 +235,10 @@ router.post("/initialize", jwtAuth, async (req, res) => {
 
     // MQTT Topics
     const topics = {
-      gps: `stroller/${strollerId}/gps`,
-      status: `stroller/${strollerId}/status`,
-      tempHumidity: `stroller/${strollerId}/temp_humidity`,
-      commands: `backend/${strollerId}/commands`,
+      gps: `stroller/${userId}/gps`,
+      status: `stroller/${userId}/status`,
+      tempHumidity: `stroller/${userId}/temp_humidity`,
+      commands: `backend/${userId}/commands`,
     };
 
     // Subscribe to stroller topics
@@ -202,7 +290,7 @@ router.post("/initialize", jwtAuth, async (req, res) => {
 
     mqttClient.on("message", (topic, message) => {
       const data = JSON.parse(message.toString());
-      if (topic === topics.gps) handleGPSData(data);
+      if (topic === topics.gps) handleGPSData(data, userId);
       if (topic === topics.status) handleStatusUpdate(data);
       if (topic === topics.tempHumidity) handleTempHumidityUpdate(data);
     });
@@ -314,6 +402,7 @@ router.post("/mode", jwtAuth, async (req, res) => {
 
     // Update the mode in memory
     strollerStatus.mode = mode;
+    await strollerData.save();
 
     res.status(200).send({
       success: true,
@@ -836,7 +925,7 @@ router.post("/steer", jwtAuth, async (req, res) => {
 
     // Update the steering value in the database
     strollerData.steering = steering;
-    await strollerData.save();
+    // await strollerData.save();
 
     // MQTT Topics
     const topics = {
