@@ -111,7 +111,7 @@ function broadcastWS(message) {
 }
 
 // Function to send commands to the stroller
-function sendCommand(command) {
+function sendCommand(command, topics) {
   console.log(`Sending command to stroller: ${JSON.stringify(command)}`);
   mqttClient.publish(topics.commands, JSON.stringify(command), (err) => {
     if (err) {
@@ -260,6 +260,32 @@ router.post("/mode", jwtAuth, async (req, res) => {
     });
   }
 
+  const userExists = await ecbUserRegistration.findOne({ sysUserId: userId }); // Replace UserModel with your actual user model
+  if (!userExists) {
+    return res.status(404).send({
+      success: false,
+      message: "User ID does not exist.",
+    });
+  }
+
+  const { strollerId } = userExists;
+
+  // MQTT Topics
+  const topics = {
+    gps: `stroller/${strollerId}/gps`,
+    status: `stroller/${strollerId}/status`,
+    tempHumidity: `stroller/${strollerId}/temp_humidity`,
+    commands: `backend/${strollerId}/commands`,
+  };
+
+  sendCommand(
+    {
+      type: "mode",
+      value: mode,
+    },
+    topics
+  );
+
   if (!userId) {
     return res.status(400).send({
       success: false,
@@ -271,8 +297,7 @@ router.post("/mode", jwtAuth, async (req, res) => {
     type: "modeChange",
     data: {
       mode,
-      userId,
-      message: "Stroller mode updated successfully",
+      value: mode,
     },
   });
 
@@ -320,6 +345,25 @@ router.post("/speed", jwtAuth, async (req, res) => {
       message: "User ID is required to update the stroller speed.",
     });
   }
+  const userExists = await ecbUserRegistration.findOne({ sysUserId: userId }); // Replace UserModel with your actual user model
+  if (!userExists) {
+    return res.status(404).send({
+      success: false,
+      message: "User ID does not exist.",
+    });
+  }
+
+  const { strollerId } = userExists;
+
+  // MQTT Topics
+  const topics = {
+    gps: `stroller/${strollerId}/gps`,
+    status: `stroller/${strollerId}/status`,
+    tempHumidity: `stroller/${strollerId}/temp_humidity`,
+    commands: `backend/${strollerId}/commands`,
+  };
+
+  sendCommand({ type: "speed", value: speed }, topics);
 
   try {
     // Find the existing stroller data by userId
@@ -372,6 +416,33 @@ router.post("/distance/reset", jwtAuth, async (req, res) => {
       message: "User ID is required to reset the distance.",
     });
   }
+
+  const userExists = await ecbUserRegistration.findOne({ sysUserId: userId }); // Replace UserModel with your actual user model
+  if (!userExists) {
+    return res.status(404).send({
+      success: false,
+      message: "User ID does not exist.",
+    });
+  }
+
+  const { strollerId } = userExists;
+
+  // MQTT Topics
+  const topics = {
+    gps: `stroller/${strollerId}/gps`,
+    status: `stroller/${strollerId}/status`,
+    tempHumidity: `stroller/${strollerId}/temp_humidity`,
+    commands: `backend/${strollerId}/commands`,
+  };
+
+  sendCommand(
+    {
+      type: "resetDistance",
+      value: 0,
+    },
+    topics
+  );
+
   // Broadcast the mode change to WebSocket clients
   broadcastWS({
     type: "resetDistance",
@@ -428,6 +499,26 @@ router.post("/distance/halt", jwtAuth, async (req, res) => {
     });
   }
 
+  const userExists = await ecbUserRegistration.findOne({ sysUserId: userId }); // Replace UserModel with your actual user model
+  if (!userExists) {
+    return res.status(404).send({
+      success: false,
+      message: "User ID does not exist.",
+    });
+  }
+
+  const { strollerId } = userExists;
+
+  // MQTT Topics
+  const topics = {
+    gps: `stroller/${strollerId}/gps`,
+    status: `stroller/${strollerId}/status`,
+    tempHumidity: `stroller/${strollerId}/temp_humidity`,
+    commands: `backend/${strollerId}/commands`,
+  };
+
+  sendCommand({ type: "halt", value: true }, topics);
+
   // Broadcast the mode change to WebSocket clients
   broadcastWS({
     type: "haltDistance",
@@ -481,6 +572,26 @@ router.post("/distance/resume", jwtAuth, async (req, res) => {
       message: "User ID is required to resume distance tracking.",
     });
   }
+
+  const userExists = await ecbUserRegistration.findOne({ sysUserId: userId }); // Replace UserModel with your actual user model
+  if (!userExists) {
+    return res.status(404).send({
+      success: false,
+      message: "User ID does not exist.",
+    });
+  }
+
+  const { strollerId } = userExists;
+
+  // MQTT Topics
+  const topics = {
+    gps: `stroller/${strollerId}/gps`,
+    status: `stroller/${strollerId}/status`,
+    tempHumidity: `stroller/${strollerId}/temp_humidity`,
+    commands: `backend/${strollerId}/commands`,
+  };
+
+  sendCommand({ type: "resume", value: true }, topics);
 
   // Broadcast the mode change to WebSocket clients
   broadcastWS({
@@ -547,6 +658,28 @@ router.get("/distance", jwtAuth, async (req, res) => {
       });
     }
 
+    const userExists = await ecbUserRegistration.findOne({ sysUserId: userId }); // Replace UserModel with your actual user model
+    if (!userExists) {
+      return res.status(404).send({
+        success: false,
+        message: "User ID does not exist.",
+      });
+    }
+
+    const { strollerId } = userExists;
+
+    // MQTT Topics
+    const topics = {
+      gps: `stroller/${strollerId}/gps`,
+      status: `stroller/${strollerId}/status`,
+      tempHumidity: `stroller/${strollerId}/temp_humidity`,
+      commands: `backend/${strollerId}/commands`,
+    };
+
+    sendCommand(
+      { type: "distance", value: strollerData.distance || 0 },
+      topics
+    );
     // Broadcast the mode change to WebSocket clients
     broadcastWS({
       type: "getDistance",
@@ -595,6 +728,26 @@ router.get("/status", jwtAuth, async (req, res) => {
       });
     }
 
+    const userExists = await ecbUserRegistration.findOne({ sysUserId: userId }); // Replace UserModel with your actual user model
+    if (!userExists) {
+      return res.status(404).send({
+        success: false,
+        message: "User ID does not exist.",
+      });
+    }
+
+    const { strollerId } = userExists;
+
+    // MQTT Topics
+    const topics = {
+      gps: `stroller/${strollerId}/gps`,
+      status: `stroller/${strollerId}/status`,
+      tempHumidity: `stroller/${strollerId}/temp_humidity`,
+      commands: `backend/${strollerId}/commands`,
+    };
+
+    sendCommand({ type: "status", value: strollerData.status || null }, topics);
+
     // Broadcast the mode change to WebSocket clients
     broadcastWS({
       type: "getStatus",
@@ -640,6 +793,26 @@ router.post("/steer", jwtAuth, async (req, res) => {
       .send({ success: false, message: "Invalid steering value" });
   }
 
+  const userExists = await ecbUserRegistration.findOne({ sysUserId: userId }); // Replace UserModel with your actual user model
+  if (!userExists) {
+    return res.status(404).send({
+      success: false,
+      message: "User ID does not exist.",
+    });
+  }
+
+  const { strollerId } = userExists;
+
+  // MQTT Topics
+  const topics = {
+    gps: `stroller/${strollerId}/gps`,
+    status: `stroller/${strollerId}/status`,
+    tempHumidity: `stroller/${strollerId}/temp_humidity`,
+    commands: `backend/${strollerId}/commands`,
+  };
+
+  sendCommand({ type: "steer", value: steering || null }, topics);
+
   // Broadcast the mode change to WebSocket clients
   broadcastWS({
     type: "setSteering",
@@ -665,8 +838,15 @@ router.post("/steer", jwtAuth, async (req, res) => {
     strollerData.steering = steering;
     await strollerData.save();
 
+    // MQTT Topics
+    const topics = {
+      gps: `stroller/${strollerId}/gps`,
+      status: `stroller/${strollerId}/status`,
+      tempHumidity: `stroller/${strollerId}/temp_humidity`,
+      commands: `backend/${strollerId}/commands`,
+    };
     // Publish the steering command
-    sendCommand({ type: "steer", value: steering });
+    sendCommand({ type: "steer", value: steering }, topics);
 
     console.log(`Steering updated for user ${userId}: ${steering}`);
     res.status(200).send({
@@ -758,6 +938,26 @@ router.post("/remote", jwtAuth, async (req, res) => {
       .status(400)
       .send({ success: false, message: "Invalid remote control option." });
   }
+
+  const userExists = await ecbUserRegistration.findOne({ sysUserId: userId }); // Replace UserModel with your actual user model
+  if (!userExists) {
+    return res.status(404).send({
+      success: false,
+      message: "User ID does not exist.",
+    });
+  }
+
+  const { strollerId } = userExists;
+
+  // MQTT Topics
+  const topics = {
+    gps: `stroller/${strollerId}/gps`,
+    status: `stroller/${strollerId}/status`,
+    tempHumidity: `stroller/${strollerId}/temp_humidity`,
+    commands: `backend/${strollerId}/commands`,
+  };
+
+  sendCommand({ type: "remote", value: remote }, topics);
 
   try {
     // Fetch existing stroller data for the user
