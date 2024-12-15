@@ -9,6 +9,7 @@ import crypto from "crypto";
 import ecbLengthCurrent from "../models/ecbLengthCurrent.model.js";
 import ecbWeightCurrent from "../models/ecbWeightCurrent.model.js";
 import ecbTempCurrent from "../models/ecbTempCurrent.model.js";
+import ecbDeviceRegistration from "../models/ecbDeviceRegistration.model.js";
 
 dotenv.config();
 
@@ -177,6 +178,25 @@ export const create = async (req, res) => {
 
     // Save the new user
     const newData = await data.save();
+
+    const deviceData = new ecbDeviceRegistration({
+      userFedParentFirstName: userFedParentFirstName,
+      userFedStrollerModelNo: userFedStrollerModelNo,
+      sysUserId: newSysUserId,
+    });
+
+    // Find the user by email
+    const userWithDevice = await ecbDeviceRegistration.findOne({
+      sysUserId: newSysUserId,
+    });
+
+    if (userWithDevice) {
+      return res
+        .status(404)
+        .json({ message: "A device has been already created by the user id." });
+    }
+
+    const newDeviceData = await deviceData.save();
 
     const lengthData = new ecbLengthCurrent({
       sysUserId: newSysUserId,
