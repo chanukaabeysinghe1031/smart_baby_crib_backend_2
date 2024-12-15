@@ -360,10 +360,10 @@ router.post("/mode", jwtAuth, async (req, res) => {
 
   // MQTT Topics
   const topics = {
-    gps: `stroller/${strollerId}/gps`,
-    status: `stroller/${strollerId}/status`,
-    tempHumidity: `stroller/${strollerId}/temp_humidity`,
-    commands: `backend/${strollerId}/commands`,
+    gps: `stroller/${userId}/gps`,
+    status: `stroller/${userId}/status`,
+    tempHumidity: `stroller/${userId}/temp_humidity`,
+    commands: `backend/${userId}/commands`,
   };
 
   sendCommand(
@@ -446,10 +446,10 @@ router.post("/speed", jwtAuth, async (req, res) => {
 
   // MQTT Topics
   const topics = {
-    gps: `stroller/${strollerId}/gps`,
-    status: `stroller/${strollerId}/status`,
-    tempHumidity: `stroller/${strollerId}/temp_humidity`,
-    commands: `backend/${strollerId}/commands`,
+    gps: `stroller/${userId}/gps`,
+    status: `stroller/${userId}/status`,
+    tempHumidity: `stroller/${userId}/temp_humidity`,
+    commands: `backend/${userId}/commands`,
   };
 
   sendCommand({ type: "speed", value: speed }, topics);
@@ -518,10 +518,10 @@ router.post("/distance/reset", jwtAuth, async (req, res) => {
 
   // MQTT Topics
   const topics = {
-    gps: `stroller/${strollerId}/gps`,
-    status: `stroller/${strollerId}/status`,
-    tempHumidity: `stroller/${strollerId}/temp_humidity`,
-    commands: `backend/${strollerId}/commands`,
+    gps: `stroller/${userId}/gps`,
+    status: `stroller/${userId}/status`,
+    tempHumidity: `stroller/${userId}/temp_humidity`,
+    commands: `backend/${userId}/commands`,
   };
 
   sendCommand(
@@ -600,10 +600,10 @@ router.post("/distance/halt", jwtAuth, async (req, res) => {
 
   // MQTT Topics
   const topics = {
-    gps: `stroller/${strollerId}/gps`,
-    status: `stroller/${strollerId}/status`,
-    tempHumidity: `stroller/${strollerId}/temp_humidity`,
-    commands: `backend/${strollerId}/commands`,
+    gps: `stroller/${userId}/gps`,
+    status: `stroller/${userId}/status`,
+    tempHumidity: `stroller/${userId}/temp_humidity`,
+    commands: `backend/${userId}/commands`,
   };
 
   sendCommand({ type: "halt", value: true }, topics);
@@ -674,10 +674,10 @@ router.post("/distance/resume", jwtAuth, async (req, res) => {
 
   // MQTT Topics
   const topics = {
-    gps: `stroller/${strollerId}/gps`,
-    status: `stroller/${strollerId}/status`,
-    tempHumidity: `stroller/${strollerId}/temp_humidity`,
-    commands: `backend/${strollerId}/commands`,
+    gps: `stroller/${userId}/gps`,
+    status: `stroller/${userId}/status`,
+    tempHumidity: `stroller/${userId}/temp_humidity`,
+    commands: `backend/${userId}/commands`,
   };
 
   sendCommand({ type: "resume", value: true }, topics);
@@ -759,10 +759,10 @@ router.get("/distance", jwtAuth, async (req, res) => {
 
     // MQTT Topics
     const topics = {
-      gps: `stroller/${strollerId}/gps`,
-      status: `stroller/${strollerId}/status`,
-      tempHumidity: `stroller/${strollerId}/temp_humidity`,
-      commands: `backend/${strollerId}/commands`,
+      gps: `stroller/${userId}/gps`,
+      status: `stroller/${userId}/status`,
+      tempHumidity: `stroller/${userId}/temp_humidity`,
+      commands: `backend/${userId}/commands`,
     };
 
     sendCommand(
@@ -829,10 +829,10 @@ router.get("/status", jwtAuth, async (req, res) => {
 
     // MQTT Topics
     const topics = {
-      gps: `stroller/${strollerId}/gps`,
-      status: `stroller/${strollerId}/status`,
-      tempHumidity: `stroller/${strollerId}/temp_humidity`,
-      commands: `backend/${strollerId}/commands`,
+      gps: `stroller/${userId}/gps`,
+      status: `stroller/${userId}/status`,
+      tempHumidity: `stroller/${userId}/temp_humidity`,
+      commands: `backend/${userId}/commands`,
     };
 
     sendCommand({ type: "status", value: strollerData.status || null }, topics);
@@ -894,10 +894,10 @@ router.post("/steer", jwtAuth, async (req, res) => {
 
   // MQTT Topics
   const topics = {
-    gps: `stroller/${strollerId}/gps`,
-    status: `stroller/${strollerId}/status`,
-    tempHumidity: `stroller/${strollerId}/temp_humidity`,
-    commands: `backend/${strollerId}/commands`,
+    gps: `stroller/${userId}/gps`,
+    status: `stroller/${userId}/status`,
+    tempHumidity: `stroller/${userId}/temp_humidity`,
+    commands: `backend/${userId}/commands`,
   };
 
   sendCommand({ type: "steer", value: steering || null }, topics);
@@ -929,10 +929,10 @@ router.post("/steer", jwtAuth, async (req, res) => {
 
     // MQTT Topics
     const topics = {
-      gps: `stroller/${strollerId}/gps`,
-      status: `stroller/${strollerId}/status`,
-      tempHumidity: `stroller/${strollerId}/temp_humidity`,
-      commands: `backend/${strollerId}/commands`,
+      gps: `stroller/${userId}/gps`,
+      status: `stroller/${userId}/status`,
+      tempHumidity: `stroller/${userId}/temp_humidity`,
+      commands: `backend/${userId}/commands`,
     };
     // Publish the steering command
     sendCommand({ type: "steer", value: steering }, topics);
@@ -1040,10 +1040,10 @@ router.post("/remote", jwtAuth, async (req, res) => {
 
   // MQTT Topics
   const topics = {
-    gps: `stroller/${strollerId}/gps`,
-    status: `stroller/${strollerId}/status`,
-    tempHumidity: `stroller/${strollerId}/temp_humidity`,
-    commands: `backend/${strollerId}/commands`,
+    gps: `stroller/${userId}/gps`,
+    status: `stroller/${userId}/status`,
+    tempHumidity: `stroller/${userId}/temp_humidity`,
+    commands: `backend/${userId}/commands`,
   };
 
   sendCommand({ type: "remote", value: remote }, topics);
