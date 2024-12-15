@@ -59,4 +59,4 @@ jobs:
           app-name: 'SmartCribMainApp'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_868E17B8B8DB4A46B2B160A5F947B939 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C7F1317C40F14C10ACE7F03602B3477F }}
