@@ -1,14 +1,22 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const mqtt = require("mqtt");
-const WebSocket = require("ws");
-const fs = require("fs");
-const path = require("path");
+import express from "express";
+import bodyParser from "body-parser";
+import cors from "cors";
+import mqtt from "mqtt";
+import WebSocket from "ws";
+import fs from "fs";
+import path from "path";
 
 const app = express();
 const port = 3000;
+const strollerId = "11";
 
+// MQTT Topics
+const topics = {
+  gps: `stroller/${strollerId}/gps`,
+  status: `stroller/${strollerId}/status`,
+  tempHumidity: `stroller/${strollerId}/temp_humidity`,
+  commands: `backend/${strollerId}/commands`,
+};
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
@@ -22,8 +30,6 @@ const mqttClient = mqtt.connect({
   password: "kobve3-Rudmug-tidkax",
   rejectUnauthorized: true,
 });
-
-const strollerId = "stroller_001";
 
 // Data Store
 let strollerStatus = {
@@ -239,13 +245,6 @@ app.post("/api/mode", (req, res) => {
     return res.status(400).send({ success: false, message: "Invalid mode" });
   }
 
-  // MQTT Topics
-  const topics = {
-    gps: `stroller/${strollerId}/gps`,
-    status: `stroller/${strollerId}/status`,
-    tempHumidity: `stroller/${strollerId}/temp_humidity`,
-    commands: `backend/${strollerId}/commands`,
-  };
   strollerStatus.mode = mode;
   sendCommand({ type: "mode", value: mode }, topics);
 

@@ -1,23 +1,13 @@
 // webSocketRoutes.js
 import express from "express";
 import mqtt from "mqtt";
-import WebSocket from "ws";
+import { WebSocketServer } from "ws"; // Correct WebSocket import
 import ecbStrollerStatus from "../models/ecbStrollerStatus.model.js";
 import jwtAuth from "../jwtAuth.js"; // Import the JWT middleware
 import ecbUserRegistration from "../models/ecbUserRegistration.model.js";
 import ecbGpsTrackCurrent from "../models/ecbGpsTrackCurrent.model.js";
 
 const router = express.Router();
-
-// MQTT Client Setup
-const mqttClient = mqtt.connect({
-  host: "2a5fd801f5304348ba68615833f3f501.s1.eu.hivemq.cloud",
-  port: 8883,
-  protocol: "mqtts",
-  username: "Protonest",
-  password: "kobve3-Rudmug-tidkax",
-  rejectUnauthorized: true,
-});
 
 let strollerStatus = {
   mode: "Manual",
@@ -32,140 +22,12 @@ let strollerStatus = {
   walk: 0,
 };
 
-// Handle incoming GPS data
-async function handleGPSData({ latitude, longitude }, userId) {
-  console.log("SAVING GPS DATA FROM DEVICE");
-  try {
-    const strollerStatus = await ecbStrollerStatus.findOne({ userId });
+const mqttConnections = new Map(); // Store MQTT clients by strollerId
+let mqttClient;
 
-    if (!strollerData) {
-      return res.status(404).send({
-        success: false,
-        message: "Stroller data not found for the provided user ID.",
-      });
-    }
-
-    console.log("Handling GPS data...");
-    if (strollerStatus.halted) {
-      console.log("Distance tracking is halted. Ignoring GPS data.");
-      return;
-    }
-
-    const gpsHistory = strollerStatus.gpsHistory;
-    if (gpsHistory.length > 0) {
-      const lastLocation = gpsHistory[gpsHistory.length - 1];
-      const distance = calculateDistance(
-        lastLocation.latitude,
-        lastLocation.longitude,
-        latitude,
-        longitude
-      );
-      strollerStatus.distance += distance; // Add calculated distance
-    } else {
-      console.log("GPS history is empty. This is the first data point.");
-    }
-
-    gpsHistory.push({ latitude, longitude });
-    strollerStatus.gpsHistory = gpsHistory.slice(-50); // Keep last 50 locations for efficiency
-
-    console.log(`GPS Data: Lat=${latitude}, Lon=${longitude}`);
-    console.log(
-      `Updated Distance: ${strollerStatus.distance.toFixed(2)} meters`
-    );
-
-    // ================================================================
-    // TODO SAVE NUMBER OF WALKS
-    // ================================================================
-    // Parse incoming data
-    const newLatitude = parseFloat(latitude);
-    const newLongitude = parseFloat(longitude);
-    const currentDateTime = new Date();
-    const newGPSTrackData = new ecbGpsTrackCurrent({
-      sysUserId: userId,
-      sysGpsLongitude: latitude,
-      sysGpsLatitude: longitude,
-      etlDateTime: currentDateTime,
-    });
-
-    // Fetch the last GPS record for the same user
-    const lastRecord = await ecbGpsTrackCurrent
-      .findOne({ userId })
-      .sort({ etlSequenceNo: -1 })
-      .select("sysGpsLongitude sysGpsLatitude etlDateTime numberOfWalks");
-
-    let numberOfWalks = lastRecord?.numberOfWalks || 0;
-
-    if (lastRecord) {
-      const lastLatitude = parseFloat(lastRecord.sysGpsLatitude);
-      const lastLongitude = parseFloat(lastRecord.sysGpsLongitude);
-      const lastTimestamp = new Date(lastRecord.etlDateTime);
-
-      // Calculate distance between two GPS points
-      const distance = calculateDistance(
-        lastLatitude,
-        lastLongitude,
-        newLatitude,
-        newLongitude
-      );
-
-      // If the distance is greater than 5 meters, check time difference
-      if (distance > 5) {
-        const timeDifference = Math.abs(newTimestamp - lastTimestamp); // Difference in ms
-        if (timeDifference >= 30 * 60 * 1000) {
-          numberOfWalks += 1; // Increment walk count
-        }
-      }
-    }
-
-    // Save the new GPS record with updated walk count
-    newGPSTrackData.numberOfWalks = numberOfWalks;
-    newGPSTrackData.save();
-    strollerStatus.numberOfWalks = numberOfWalks;
-
-    // ================================================================
-    // Find the existing stroller data by userId
-    await strollerStatus.save();
-
-    // Broadcast the updated distance and GPS data to WebSocket clients
-    broadcastWS({
-      type: "update",
-      data: {
-        latitude,
-        longitude,
-        distance: strollerStatus.distance,
-      },
-    });
-  } catch (error) {
-    console.error("Error saving GPS data:", error.message);
-  }
-}
-
-async function handleStatusUpdate({ status, userId }) {
-  try {
-    console.log("SAVING STROLLER STATUS FROM DEVICE");
-    const strollerStatus = await ecbStrollerStatus.findOne({ userId });
-
-    strollerStatus.status = status;
-    await strollerStatus.save();
-  } catch (error) {
-    console.error("Error saving status:", error.message);
-  }
-}
-
-async function handleTempHumidityUpdate({ temperature, humidity }, userId) {
-  console.log("SAVING STROLLER STATUS FROM DEVICE");
-  try {
-    const strollerStatus = await ecbStrollerStatus.findOne({ userId });
-
-    strollerStatus.temperature = temperature;
-    strollerStatus.humidity = humidity;
-
-    await strollerStatus.save();
-  } catch (error) {
-    console.error("Error saving temperature and humidty:", error.message);
-  }
-}
-
+// ====================================================================
+// ======================== UTILITY FUNCTIONS =========================
+// ====================================================================
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const toRad = (deg) => (deg * Math.PI) / 180;
   const R = 6371e3; // Earth's radius in meters
@@ -177,16 +39,6 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     Math.sin(Δφ / 2) ** 2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) ** 2;
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
-}
-
-// WebSocket Setup
-let wss;
-function setupWebSocket(server) {
-  wss = new WebSocket.Server({ server });
-  wss.on("connection", (ws) => {
-    ws.send(JSON.stringify({ type: "initial", data: strollerStatus }));
-    ws.on("message", (message) => console.log("WS Received:", message));
-  });
 }
 
 function broadcastWS(message) {
@@ -210,6 +62,289 @@ function sendCommand(command, topics) {
   });
 }
 
+// ====================================================================
+// ============= FUNCTIONS TO GET DATA FROM MQTT ======================
+// ====================================================================
+
+async function handleGPSData({ latitude, longitude }, userId) {
+  console.log("SAVING GPS DATA FROM DEVICE OF USER");
+
+  try {
+    const strollerStatus = await ecbStrollerStatus.findOne({ userId });
+
+    if (!strollerStatus) {
+      console.log("Stroller data not found for the provided user ID.");
+      return;
+    }
+
+    if (strollerStatus.halted) {
+      console.log("Distance tracking is halted. Ignoring GPS data.");
+      return;
+    }
+
+    console.log("Handling GPS data...");
+    const gpsHistory = strollerStatus.gpsHistory || [];
+    const newLatitude = parseFloat(latitude);
+    const newLongitude = parseFloat(longitude);
+    const currentDateTime = new Date();
+
+    if (gpsHistory.length > 0) {
+      const lastLocation = gpsHistory[gpsHistory.length - 1];
+      const distance = calculateDistance(
+        lastLocation.latitude,
+        lastLocation.longitude,
+        newLatitude,
+        newLongitude
+      );
+
+      if (distance > 5) {
+        strollerStatus.distance += distance;
+        gpsHistory.push({ latitude: newLatitude, longitude: newLongitude });
+      } else {
+        console.log(
+          "New GPS point is within 5 meters of the last point. Ignoring."
+        );
+      }
+    } else {
+      console.log("GPS history is empty. Saving the first data point.");
+      gpsHistory.push({ latitude: newLatitude, longitude: newLongitude });
+      strollerStatus.gpsHistory = gpsHistory;
+    }
+
+    console.log(`GPS Data: Lat=${latitude}, Lon=${longitude}`);
+    console.log(
+      `Updated Distance: ${strollerStatus.distance.toFixed(2)} meters`
+    );
+
+    // Handle walk counts
+    const lastRecord = await ecbGpsTrackCurrent
+      .findOne({ userId })
+      .sort({ etlSequenceNo: -1 })
+      .select("sysGpsLongitude sysGpsLatitude etlDateTime numberOfWalks");
+
+    let numberOfWalks = lastRecord?.numberOfWalks || 0;
+    let saveCurrentGPS = true; // Flag to determine if the GPS should be saved
+
+    if (lastRecord) {
+      const lastLatitude = parseFloat(lastRecord.sysGpsLatitude);
+      const lastLongitude = parseFloat(lastRecord.sysGpsLongitude);
+      const lastTimestamp = new Date(lastRecord.etlDateTime);
+
+      const distance = calculateDistance(
+        lastLatitude,
+        lastLongitude,
+        newLatitude,
+        newLongitude
+      );
+
+      if (distance < 5) {
+        console.log(
+          "New GPS point is within 5 meters of the last point. Ignoring."
+        );
+        saveCurrentGPS = false; // Skip saving this GPS
+      } else {
+        console.log(
+          `Distance from last GPS point: ${distance.toFixed(2)} meters.`
+        );
+        // Check time difference for walk count increment
+        const timeDifference = Math.abs(currentDateTime - lastTimestamp); // Difference in ms
+        if (timeDifference >= 30 * 60 * 1000) {
+          numberOfWalks += 1; // Increment walk count
+        }
+      }
+    }
+
+    if (saveCurrentGPS) {
+      const newGPSTrackData = new ecbGpsTrackCurrent({
+        sysUserId: userId,
+        sysGpsLongitude: newLongitude,
+        sysGpsLatitude: newLatitude,
+        etlDateTime: currentDateTime,
+        numberOfWalks,
+      });
+
+      await newGPSTrackData.save();
+      strollerStatus.numberOfWalks = numberOfWalks;
+
+      await strollerStatus.save();
+
+      // Broadcast to WebSocket clients
+      try {
+        broadcastWS({
+          type: "update",
+          data: {
+            latitude: newLatitude,
+            longitude: newLongitude,
+            distance: strollerStatus.distance,
+          },
+        });
+      } catch (wsError) {
+        console.error("Error broadcasting data:", wsError.message);
+      }
+    }
+  } catch (error) {
+    console.error("Error saving GPS data:", error.message);
+  }
+
+  console.log("======================================================");
+}
+
+async function handleStatusUpdate({ status, userId }) {
+  console.log("==========================================");
+  try {
+    console.log("SAVING STROLLER STATUS FROM DEVICE USERID : " + userId);
+
+    // Find the stroller status by userId
+    let strollerStatus = await ecbStrollerStatus.findOne({ userId: userId });
+
+    if (!strollerStatus) {
+      // Handle the case where no document is found
+      console.log(
+        "No existing stroller status found for user. Creating a new record."
+      );
+      strollerStatus = new ecbStrollerStatus({ userId, status });
+    } else {
+      // Update the existing status
+      strollerStatus.status = status;
+    }
+
+    // Save the updated or new document
+    await strollerStatus.save();
+    console.log("Stroller status saved successfully.");
+  } catch (error) {
+    console.error("Error saving status:", error.message);
+  }
+  console.log("==========================================");
+}
+
+async function handleTempHumidityUpdate({ temperature, humidity }, userId) {
+  console.log("==========================================");
+  console.log("SAVING STROLLER STATUS FROM DEVICE");
+  try {
+    // Find the stroller status by userId
+    let strollerStatus = await ecbStrollerStatus.findOne({ userId });
+
+    // If no record exists, handle appropriately
+    if (!strollerStatus) {
+      console.log(
+        "No existing stroller status found for user. Creating a new record."
+      );
+      strollerStatus = new ecbStrollerStatus({ userId, temperature, humidity });
+    } else {
+      // Update the existing record
+      strollerStatus.temperature = temperature;
+      strollerStatus.humidity = humidity;
+    }
+
+    // Save the record (new or updated)
+    await strollerStatus.save();
+    console.log("Stroller status saved successfully.");
+  } catch (error) {
+    console.error("Error saving temperature and humidity:", error.message);
+  }
+  console.log("==========================================");
+}
+
+// ====================================================================
+// ============= FUNCTIONS TO GET DATA FROM MQTT ======================
+// ====================================================================
+let wss;
+// WebSocket Setup
+function setupMQTT() {
+  const userId = 11;
+  // MQTT Topics
+  const topics = {
+    gps: `stroller/11/gps`,
+    status: `stroller/11/status`,
+    tempHumidity: `stroller/11/temp_humidity`,
+    commands: `backend/11/commands`,
+  };
+  // MQTT Client Setup
+  mqttClient = mqtt.connect({
+    host: "2a5fd801f5304348ba68615833f3f501.s1.eu.hivemq.cloud",
+    port: 8883,
+    protocol: "mqtts",
+    username: "Protonest",
+    password: "kobve3-Rudmug-tidkax",
+    rejectUnauthorized: true,
+  });
+
+  // Subscribe to stroller topics
+  mqttClient.on("connect", () => {
+    console.log("Connected to MQTT broker");
+
+    const subscribeTopics = [topics.gps, topics.status, topics.tempHumidity];
+
+    subscribeTopics.forEach((topic) => {
+      mqttClient.subscribe(topic, (err) => {
+        if (!err) {
+          console.log(`Subscribed to ${topic} topic`);
+        } else {
+          console.error(`Subscription error for topic ${topic}:`, err);
+        }
+      });
+    });
+  });
+
+  // Handle MQTT connection errors
+  mqttClient.on("error", (error) => {
+    console.error("MQTT Connection Error:", error);
+  });
+
+  mqttClient.on("reconnect", () => {
+    console.log("Reconnecting to MQTT broker...");
+  });
+
+  mqttClient.on("offline", () => {
+    console.log("MQTT client is offline");
+  });
+
+  const saveInitialStatus = async (userId) => {
+    try {
+      const data = new ecbStrollerStatus({ userId, ...strollerStatus });
+      const newData = await data.save();
+      return await data.save();
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  };
+
+  // MQTT Subscription and Handlers
+  mqttClient.on("connect", async () => {
+    console.log("Connected to MQTT broker");
+    const subscribeTopics = [topics.gps, topics.status, topics.tempHumidity];
+    subscribeTopics.forEach((topic) => mqttClient.subscribe(topic));
+  });
+
+  mqttClient.on("message", (topic, message) => {
+    const data = JSON.parse(message.toString());
+    if (topic === topics.gps) handleGPSData(data, userId);
+    if (topic === topics.status) handleStatusUpdate(data, userId);
+    if (topic === topics.tempHumidity) handleTempHumidityUpdate(data, userId);
+  });
+
+  // Handle incoming MQTT messages from the stroller
+  mqttClient.on("message", (topic, message) => {
+    console.log(`Received message on topic ${topic}: ${message.toString()}`);
+
+    if (topic === topics.gps) {
+      handleGPSData(JSON.parse(message.toString()));
+    } else if (topic === topics.status) {
+      handleStatusUpdate(JSON.parse(message.toString()));
+    } else if (topic === topics.tempHumidity) {
+      handleTempHumidityUpdate(JSON.parse(message.toString()));
+    }
+  });
+}
+
+function setupWebSocket(server) {
+  wss = new WebSocketServer({ server });
+  wss.on("connection", (ws) => {
+    ws.send(JSON.stringify({ type: "initial", data: strollerStatus }));
+    ws.on("message", (message) => console.log("WS Received:", message));
+  });
+}
+
 // REST API Routes
 // 1. Initialize Stroller
 router.post("/initialize", jwtAuth, async (req, res) => {
@@ -223,6 +358,11 @@ router.post("/initialize", jwtAuth, async (req, res) => {
   }
 
   try {
+    setupMQTT();
+    console.log("+++++++++++++++++++++++++++++++++++++++++=");
+    console.log("+++++++++++++++++++++++++++++++++++++++++=");
+    console.log("+++++++++++++++++++++++++++++++++++++++++=");
+
     const userExists = await ecbUserRegistration.findOne({ sysUserId: userId }); // Replace UserModel with your actual user model
     if (!userExists) {
       return res.status(404).send({
@@ -231,101 +371,12 @@ router.post("/initialize", jwtAuth, async (req, res) => {
       });
     }
 
-    const { strollerId } = userExists;
-
-    // MQTT Topics
-    const topics = {
-      gps: `stroller/${userId}/gps`,
-      status: `stroller/${userId}/status`,
-      tempHumidity: `stroller/${userId}/temp_humidity`,
-      commands: `backend/${userId}/commands`,
-    };
-
-    // Subscribe to stroller topics
-    mqttClient.on("connect", () => {
-      console.log("Connected to MQTT broker");
-
-      const subscribeTopics = [topics.gps, topics.status, topics.tempHumidity];
-
-      subscribeTopics.forEach((topic) => {
-        mqttClient.subscribe(topic, (err) => {
-          if (!err) {
-            console.log(`Subscribed to ${topic} topic`);
-          } else {
-            console.error(`Subscription error for topic ${topic}:`, err);
-          }
-        });
-      });
-    });
-
-    // Handle MQTT connection errors
-    mqttClient.on("error", (error) => {
-      console.error("MQTT Connection Error:", error);
-    });
-
-    mqttClient.on("reconnect", () => {
-      console.log("Reconnecting to MQTT broker...");
-    });
-
-    mqttClient.on("offline", () => {
-      console.log("MQTT client is offline");
-    });
-
-    const saveInitialStatus = async (userId) => {
-      try {
-        const data = new ecbStrollerStatus({ userId, ...strollerStatus });
-        const newData = await data.save();
-        return await data.save();
-      } catch (err) {
-        throw new Error(err.message);
-      }
-    };
-
-    // MQTT Subscription and Handlers
-    mqttClient.on("connect", async () => {
-      console.log("Connected to MQTT broker");
-      const subscribeTopics = [topics.gps, topics.status, topics.tempHumidity];
-      subscribeTopics.forEach((topic) => mqttClient.subscribe(topic));
-    });
-
-    mqttClient.on("message", (topic, message) => {
-      const data = JSON.parse(message.toString());
-      if (topic === topics.gps) handleGPSData(data, userId);
-      if (topic === topics.status) handleStatusUpdate(data, userId);
-      if (topic === topics.tempHumidity) handleTempHumidityUpdate(data, userId);
-    });
-
-    // Handle incoming MQTT messages from the stroller
-    mqttClient.on("message", (topic, message) => {
-      console.log(`Received message on topic ${topic}: ${message.toString()}`);
-
-      if (topic === topics.gps) {
-        handleGPSData(JSON.parse(message.toString()));
-      } else if (topic === topics.status) {
-        handleStatusUpdate(JSON.parse(message.toString()));
-      } else if (topic === topics.tempHumidity) {
-        handleTempHumidityUpdate(JSON.parse(message.toString()));
-      }
-    });
-
-    // Check if a record with the userId already exists
-    const strollerExists = await ecbStrollerStatus.findOne({
-      sysUserId: userId,
-    }); // Replace UserModel with your actual user model
-    if (strollerExists) {
-      return res.status(404).send({
-        success: false,
-        message: "Stroller has been already initialized.",
+    if (mqttConnections.has(userId)) {
+      return res.status(200).send({
+        success: true,
+        message: `MQTT connection already exists for strollerId: ${strollerId}.`,
       });
     }
-
-    // Save initial status if no record exists
-    const initializedStroller = await saveInitialStatus(userId);
-    res.status(201).send({
-      success: true,
-      message: "Stroller initialized successfully.",
-      data: initializedStroller,
-    });
   } catch (error) {
     console.error("Error initializing stroller:", error.message);
     res.status(500).send({
@@ -1144,4 +1195,4 @@ router.put("/temp_humidity", jwtAuth, async (req, res) => {
   }
 });
 
-export { router as websocketRouter, setupWebSocket };
+export { router as websocketRouter, setupWebSocket, setupMQTT };

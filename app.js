@@ -4,9 +4,12 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import cors from "cors";
 import { swaggerUi, swaggerSpec } from "./swaggerConfig.js";
-import WebSocket from "ws";
 import mqtt from "mqtt";
-import { setupWebSocket, websocketRouter } from "./routes/websocket.routes.js";
+import {
+  setupWebSocket,
+  websocketRouter,
+  setupMQTT,
+} from "./routes/websocket.routes.js";
 
 // Import Routes
 import ecbUserRegistration from "./routes/ecbUserRegistration.routes.js";
@@ -27,14 +30,31 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
+console.log("===========================================");
+console.log("MONGODB URI : " + process.env.MONGODB);
+console.log("===========================================");
+
 // Connect to MongoDB
 mongoose
-  .connect(process.env.MONGODB || "your-mongo-uri", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("Connected to MongoDB Atlas"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+  .connect(
+    process.env.MONGODB ||
+      "mongodb+srv://admin:admin@cluster0.yk4m9vr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
+  .then(() =>
+    console.log(
+      "************************Connected to MongoDB Atlas************************"
+    )
+  )
+  .catch((err) =>
+    console.error(
+      " *********************** MongoDB connection error *****************************:",
+      err
+    )
+  );
 
 // Middleware
 app.use(bodyParser.json());
@@ -56,10 +76,24 @@ app.use("/api/fingerprint/current", ecbFingerPrintCurrent);
 app.use("/api/notes", ecbAINotes);
 app.use("/api/websocket", websocketRouter);
 
+// MQTT and WebSocket Setup
+const mqttManagers = new Map(); // Store managers for multiple users if needed
+
+const initializeMQTTManager = (userId) => {
+  if (!mqttManagers.has(userId)) {
+    const manager = new MQTTWebSocketManager(userId);
+    manager.setupMQTTConnection();
+    mqttManagers.set(userId, manager);
+  }
+};
+
 // Create HTTP Server
 const server = app.listen(port, () => {
   console.log("Server is running on port ${port}");
 });
+
+// Setup web socket
+// setupMQTT(server);
 
 // Setup WebSocket
 setupWebSocket(server);
