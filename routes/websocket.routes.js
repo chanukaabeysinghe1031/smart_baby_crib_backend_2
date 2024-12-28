@@ -250,90 +250,67 @@ async function handleTempHumidityUpdate({ temperature, humidity }, userId) {
 // ====================================================================
 let wss;
 // WebSocket Setup
-function setupMQTT() {
-  const userId = 11;
-  // MQTT Topics
-  const topics = {
-    gps: `stroller/11/gps`,
-    status: `stroller/11/status`,
-    tempHumidity: `stroller/11/temp_humidity`,
-    commands: `backend/11/commands`,
-  };
-  // MQTT Client Setup
-  mqttClient = mqtt.connect({
-    host: "2a5fd801f5304348ba68615833f3f501.s1.eu.hivemq.cloud",
-    port: 8883,
-    protocol: "mqtts",
-    username: "Protonest",
-    password: "kobve3-Rudmug-tidkax",
-    rejectUnauthorized: true,
-  });
+function setupMQTT(userId) {
+  return new Promise((resolve, reject) => {
+    const topics = {
+      gps: `stroller/${userId}/gps`,
+      status: `stroller/${userId}/status`,
+      tempHumidity: `stroller/${userId}/temp_humidity`,
+      commands: `backend/${userId}/commands`,
+    };
 
-  // Subscribe to stroller topics
-  mqttClient.on("connect", () => {
-    console.log("Connected to MQTT broker");
+    const mqttClient = mqtt.connect({
+      host: "2a5fd801f5304348ba68615833f3f501.s1.eu.hivemq.cloud",
+      port: 8883,
+      protocol: "mqtts",
+      username: "Protonest",
+      password: "kobve3-Rudmug-tidkax",
+      rejectUnauthorized: true,
+    });
 
-    const subscribeTopics = [topics.gps, topics.status, topics.tempHumidity];
+    mqttClient.on("connect", () => {
+      console.log(`Connected to MQTT broker for user ${userId}`);
 
-    subscribeTopics.forEach((topic) => {
-      mqttClient.subscribe(topic, (err) => {
-        if (!err) {
-          console.log(`Subscribed to ${topic} topic`);
-        } else {
-          console.error(`Subscription error for topic ${topic}:`, err);
-        }
+      const subscribeTopics = [topics.gps, topics.status, topics.tempHumidity];
+
+      subscribeTopics.forEach((topic) => {
+        mqttClient.subscribe(topic, (err) => {
+          if (err) {
+            console.error(`Subscription error for topic ${topic}:`, err);
+            reject(new Error(`Subscription failed for topic ${topic}`));
+          } else {
+            console.log(`Subscribed to topic: ${topic}`);
+          }
+        });
+      });
+
+      resolve({
+        success: true,
+        message: `MQTT connection initialized for user ${userId}.`,
       });
     });
-  });
 
-  // Handle MQTT connection errors
-  mqttClient.on("error", (error) => {
-    console.error("MQTT Connection Error:", error);
-  });
+    mqttClient.on("error", (error) => {
+      console.error("MQTT Connection Error:", error);
+      reject(new Error("MQTT Connection Error: " + error.message));
+    });
 
-  mqttClient.on("reconnect", () => {
-    console.log("Reconnecting to MQTT broker...");
-  });
+    mqttClient.on("offline", () => {
+      console.log(`MQTT client is offline for user ${userId}`);
+    });
 
-  mqttClient.on("offline", () => {
-    console.log("MQTT client is offline");
-  });
+    mqttClient.on("reconnect", () => {
+      console.log(`Reconnecting to MQTT broker for user ${userId}...`);
+    });
 
-  const saveInitialStatus = async (userId) => {
-    try {
-      const data = new ecbStrollerStatus({ userId, ...strollerStatus });
-      const newData = await data.save();
-      return await data.save();
-    } catch (err) {
-      throw new Error(err.message);
-    }
-  };
+    mqttClient.on("message", (topic, message) => {
+      const data = JSON.parse(message.toString());
+      console.log(`Message received on topic ${topic}:`, data);
 
-  // MQTT Subscription and Handlers
-  mqttClient.on("connect", async () => {
-    console.log("Connected to MQTT broker");
-    const subscribeTopics = [topics.gps, topics.status, topics.tempHumidity];
-    subscribeTopics.forEach((topic) => mqttClient.subscribe(topic));
-  });
-
-  mqttClient.on("message", (topic, message) => {
-    const data = JSON.parse(message.toString());
-    if (topic === topics.gps) handleGPSData(data, userId);
-    if (topic === topics.status) handleStatusUpdate(data, userId);
-    if (topic === topics.tempHumidity) handleTempHumidityUpdate(data, userId);
-  });
-
-  // Handle incoming MQTT messages from the stroller
-  mqttClient.on("message", (topic, message) => {
-    console.log(`Received message on topic ${topic}: ${message.toString()}`);
-
-    if (topic === topics.gps) {
-      handleGPSData(JSON.parse(message.toString()));
-    } else if (topic === topics.status) {
-      handleStatusUpdate(JSON.parse(message.toString()));
-    } else if (topic === topics.tempHumidity) {
-      handleTempHumidityUpdate(JSON.parse(message.toString()));
-    }
+      if (topic === topics.gps) handleGPSData(data, userId);
+      if (topic === topics.status) handleStatusUpdate(data, userId);
+      if (topic === topics.tempHumidity) handleTempHumidityUpdate(data, userId);
+    });
   });
 }
 
@@ -358,7 +335,6 @@ router.post("/initialize", jwtAuth, async (req, res) => {
   }
 
   try {
-    setupMQTT();
     console.log("+++++++++++++++++++++++++++++++++++++++++=");
     console.log("+++++++++++++++++++++++++++++++++++++++++=");
     console.log("+++++++++++++++++++++++++++++++++++++++++=");
@@ -370,6 +346,8 @@ router.post("/initialize", jwtAuth, async (req, res) => {
         message: "User ID does not exist.",
       });
     }
+    const data = new ecbStrollerStatus({ userId, ...strollerStatus });
+    const newData = await data.save();
 
     if (mqttConnections.has(userId)) {
       return res.status(200).send({
@@ -377,6 +355,10 @@ router.post("/initialize", jwtAuth, async (req, res) => {
         message: `MQTT connection already exists for strollerId: ${strollerId}.`,
       });
     }
+    const mqttResponse = await setupMQTT(userId);
+    return res
+      .status(200)
+      .send({ success: true, message: mqttResponse.message });
   } catch (error) {
     console.error("Error initializing stroller:", error.message);
     res.status(500).send({
