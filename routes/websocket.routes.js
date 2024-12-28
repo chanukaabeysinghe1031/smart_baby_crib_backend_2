@@ -251,6 +251,10 @@ async function handleTempHumidityUpdate({ temperature, humidity }, userId) {
 let wss;
 // WebSocket Setup
 function setupMQTT(userId) {
+  console.log("_______________________________________________________");
+  console.log("_____________SETTING UP MQTT CONNECTION________________");
+  console.log("_______________________________________________________");
+
   return new Promise((resolve, reject) => {
     const topics = {
       gps: `stroller/${userId}/gps`,
@@ -334,6 +338,13 @@ router.post("/initialize", jwtAuth, async (req, res) => {
     });
   }
 
+  if (mqttConnections.has(userId)) {
+    return res.status(200).send({
+      success: true,
+      message: `MQTT connection already exists for strollerId: ${strollerId}.`,
+    });
+  }
+  const mqttResponse = await setupMQTT(userId);
   try {
     console.log("+++++++++++++++++++++++++++++++++++++++++=");
     console.log("+++++++++++++++++++++++++++++++++++++++++=");
@@ -346,16 +357,19 @@ router.post("/initialize", jwtAuth, async (req, res) => {
         message: "User ID does not exist.",
       });
     }
+
+    // Check if a stroller status already exists for the userId
+    const existingStrollerStatus = await ecbStrollerStatus.findOne({ userId });
+    if (existingStrollerStatus) {
+      return res.status(200).send({
+        success: true,
+        message: "Stroller has already been initialized for this user.",
+      });
+    }
+
     const data = new ecbStrollerStatus({ userId, ...strollerStatus });
     const newData = await data.save();
 
-    if (mqttConnections.has(userId)) {
-      return res.status(200).send({
-        success: true,
-        message: `MQTT connection already exists for strollerId: ${strollerId}.`,
-      });
-    }
-    const mqttResponse = await setupMQTT(userId);
     return res
       .status(200)
       .send({ success: true, message: mqttResponse.message });
@@ -372,7 +386,6 @@ router.post("/initialize", jwtAuth, async (req, res) => {
 router.post("/mode", jwtAuth, async (req, res) => {
   const { userId, mode } = req.body;
 
-  console.log("KKKKKKKKKK");
   // Validate the mode
   if (!["Manual", "Auto", "AutoStroll"].includes(mode)) {
     return res.status(400).send({
