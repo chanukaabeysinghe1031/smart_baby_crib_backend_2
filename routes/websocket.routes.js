@@ -97,8 +97,8 @@ async function handleGPSData({ latitude, longitude }, userId) {
         newLongitude
       );
 
+      strollerStatus.distance += distance;
       if (distance > 5) {
-        strollerStatus.distance += distance;
         gpsHistory.push({ latitude: newLatitude, longitude: newLongitude });
       } else {
         console.log(
@@ -124,6 +124,7 @@ async function handleGPSData({ latitude, longitude }, userId) {
 
     let numberOfWalks = lastRecord?.numberOfWalks || 0;
     let saveCurrentGPS = true; // Flag to determine if the GPS should be saved
+    let saveNumberOfWalks = false;
 
     if (lastRecord) {
       const lastLatitude = parseFloat(lastRecord.sysGpsLatitude);
@@ -141,16 +142,15 @@ async function handleGPSData({ latitude, longitude }, userId) {
         console.log(
           "New GPS point is within 5 meters of the last point. Ignoring."
         );
-        saveCurrentGPS = false; // Skip saving this GPS
-      } else {
-        console.log(
-          `Distance from last GPS point: ${distance.toFixed(2)} meters.`
-        );
+        // GPS are saved only when distance is greater than 5m
+        // If the latest GPS and current GPS has same location after 30 mins number of walks will be increased
         // Check time difference for walk count increment
         const timeDifference = Math.abs(currentDateTime - lastTimestamp); // Difference in ms
         if (timeDifference >= 30 * 60 * 1000) {
           numberOfWalks += 1; // Increment walk count
+          saveNumberOfWalks = true;
         }
+        saveCurrentGPS = false; // Skip saving this GPS
       }
     }
 
@@ -164,23 +164,23 @@ async function handleGPSData({ latitude, longitude }, userId) {
       });
 
       await newGPSTrackData.save();
-      strollerStatus.numberOfWalks = numberOfWalks;
+    }
 
-      await strollerStatus.save();
+    strollerStatus.numberOfWalks = numberOfWalks;
 
-      // Broadcast to WebSocket clients
-      try {
-        broadcastWS({
-          type: "update",
-          data: {
-            latitude: newLatitude,
-            longitude: newLongitude,
-            distance: strollerStatus.distance,
-          },
-        });
-      } catch (wsError) {
-        console.error("Error broadcasting data:", wsError.message);
-      }
+    await strollerStatus.save();
+    // Broadcast to WebSocket clients
+    try {
+      broadcastWS({
+        type: "update",
+        data: {
+          latitude: newLatitude,
+          longitude: newLongitude,
+          distance: strollerStatus.distance,
+        },
+      });
+    } catch (wsError) {
+      console.error("Error broadcasting data:", wsError.message);
     }
   } catch (error) {
     console.error("Error saving GPS data:", error.message);
