@@ -19,6 +19,7 @@ let strollerStatus = {
   temperature: null,
   humidity: null,
   steering: null,
+  walkingStatus: "initial",
   walk: 0,
 };
 
@@ -124,7 +125,7 @@ async function handleGPSData({ latitude, longitude }, userId) {
 
     let numberOfWalks = lastRecord?.numberOfWalks || 0;
     let saveCurrentGPS = true; // Flag to determine if the GPS should be saved
-    let saveNumberOfWalks = false;
+    let walkingStatus = lastRecord?.walkingStatus || "initial";
 
     if (lastRecord) {
       const lastLatitude = parseFloat(lastRecord.sysGpsLatitude);
@@ -146,11 +147,13 @@ async function handleGPSData({ latitude, longitude }, userId) {
         // If the latest GPS and current GPS has same location after 30 mins number of walks will be increased
         // Check time difference for walk count increment
         const timeDifference = Math.abs(currentDateTime - lastTimestamp); // Difference in ms
-        if (timeDifference >= 30 * 60 * 1000) {
+        if (
+          timeDifference >= 30 * 1000 &&
+          walkingStatus != "waitingInSamePlace"
+        ) {
           numberOfWalks += 1; // Increment walk count
-          saveNumberOfWalks = true;
+          strollerStatus.walkingStatus = "waitingInSamePlace";
         }
-        saveCurrentGPS = false; // Skip saving this GPS
       }
     }
 
@@ -161,6 +164,7 @@ async function handleGPSData({ latitude, longitude }, userId) {
         sysGpsLatitude: newLatitude,
         etlDateTime: currentDateTime,
         numberOfWalks,
+        walkingStatus: "walking",
       });
 
       await newGPSTrackData.save();
@@ -169,6 +173,7 @@ async function handleGPSData({ latitude, longitude }, userId) {
     strollerStatus.numberOfWalks = numberOfWalks;
 
     await strollerStatus.save();
+
     // Broadcast to WebSocket clients
     try {
       broadcastWS({

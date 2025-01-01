@@ -22,8 +22,9 @@ const strollerStatusSchema = new mongoose.Schema(
     temperature: { type: Number, default: null }, // Current temperature
     humidity: { type: Number, default: null }, // Current humidity
     steering: { type: Number, default: null }, // Steering value (-100 to 100),
-    speed: { type: Number, default: null }, // Steering value (-100 to 100)
+    speed: { type: Number, default: null }, // Speed
     numberOfWalks: { type: Number, default: 0 },
+    walkingStatus: { type: String, default: "initial" }, // walking status
   },
   { timestamps: true } // Automatically adds createdAt and updatedAt timestamps
 );
