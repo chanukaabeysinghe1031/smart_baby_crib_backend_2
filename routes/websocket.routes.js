@@ -88,6 +88,9 @@ async function handleGPSData({ latitude, longitude }, userId) {
     const newLatitude = parseFloat(latitude);
     const newLongitude = parseFloat(longitude);
     const currentDateTime = new Date();
+    let walkingStatus = strollerStatus?.walkingStatus || "initial";
+    let saveLastGPSTrack = false;
+    let numberOfWalks = strollerStatus.numberOfWalks || 0;
 
     if (gpsHistory.length > 0) {
       const lastLocation = gpsHistory[gpsHistory.length - 1];
@@ -97,9 +100,65 @@ async function handleGPSData({ latitude, longitude }, userId) {
         newLatitude,
         newLongitude
       );
-
       strollerStatus.distance += distance;
+
+      // Get the GPS before 10 minutes before the current time
+      // If the distance before last 10 minuts and noe GPS locations are grater than 100m then it will be a walk
+      // Calculate the timestamp 10 minutes before
+      const targetTimestamp = new Date(
+        currentDateTime.getTime() - 10 * 60 * 1000
+      );
+
+      // Find the closest GPS point to the target timestamp
+      let closestPointBefore10minutes = null;
+      let smallestTimeDifference = Infinity;
+
+      gpsHistory.forEach((point) => {
+        const pointTimestamp = new Date(point.timestamp);
+        const timeDifference = Math.abs(targetTimestamp - pointTimestamp);
+
+        if (timeDifference < smallestTimeDifference) {
+          smallestTimeDifference = timeDifference;
+          closestPointBefore10minutes = point;
+        }
+      });
+
+      if (closestPointBefore10minutes) {
+        console.log("GPS point 10 minutes before now:", {
+          latitude: closestPointBefore10minutes.latitude,
+          longitude: closestPointBefore10minutes.longitude,
+        });
+
+        let distanceDifferenceFor10minuts = calculateDistance(
+          closestPointBefore10minutes.latitude,
+          closestPointBefore10minutes.longitude,
+          newLatitude,
+          newLongitude
+        );
+
+        if (distanceDifferenceFor10minuts >= 100) {
+          walkingStatus = "MOVING_STATE";
+        }
+      } else {
+        walkingStatus = "IDLE";
+        console.log("No GPS point found.");
+      }
+
+      // If the in MOVING STATE check whether last 10 minutes in same location or in  range of 5m distance
+      if (walkingStatus === "MOVING_STATE") {
+        // Check whether stroller has been in 5m range for last 30 minutes
+        let lastTimestamp = lastLocation.timestamp;
+        const timeDifference = Math.abs(currentDateTime - lastTimestamp); // Difference in ms
+        if (timeDifference >= 30 * 1000) {
+          numberOfWalks += 1; // Increment walk count
+          walkingStatus = "IDLE";
+          saveLastGPSTrack = true;
+        }
+      }
+
+      // If distance is greater than 5 it will be added to gps history
       if (distance > 5) {
+        saveLastGPSTrack = true;
         gpsHistory.push({ latitude: newLatitude, longitude: newLongitude });
       } else {
         console.log(
@@ -117,60 +176,21 @@ async function handleGPSData({ latitude, longitude }, userId) {
       `Updated Distance: ${strollerStatus.distance.toFixed(2)} meters`
     );
 
-    // Handle walk counts
-    const lastRecord = await ecbGpsTrackCurrent
-      .findOne({ userId })
-      .sort({ etlSequenceNo: -1 })
-      .select("sysGpsLongitude sysGpsLatitude etlDateTime numberOfWalks");
-
-    let numberOfWalks = lastRecord?.numberOfWalks || 0;
-    let saveCurrentGPS = true; // Flag to determine if the GPS should be saved
-    let walkingStatus = lastRecord?.walkingStatus || "initial";
-
-    if (lastRecord) {
-      const lastLatitude = parseFloat(lastRecord.sysGpsLatitude);
-      const lastLongitude = parseFloat(lastRecord.sysGpsLongitude);
-      const lastTimestamp = new Date(lastRecord.etlDateTime);
-
-      const distance = calculateDistance(
-        lastLatitude,
-        lastLongitude,
-        newLatitude,
-        newLongitude
-      );
-
-      if (distance < 5) {
-        console.log(
-          "New GPS point is within 5 meters of the last point. Ignoring."
-        );
-        // GPS are saved only when distance is greater than 5m
-        // If the latest GPS and current GPS has same location after 30 mins number of walks will be increased
-        // Check time difference for walk count increment
-        const timeDifference = Math.abs(currentDateTime - lastTimestamp); // Difference in ms
-        if (
-          timeDifference >= 30 * 1000 &&
-          walkingStatus != "waitingInSamePlace"
-        ) {
-          numberOfWalks += 1; // Increment walk count
-          strollerStatus.walkingStatus = "waitingInSamePlace";
-        }
-      }
-    }
-
-    if (saveCurrentGPS) {
+    if (saveLastGPSTrack) {
       const newGPSTrackData = new ecbGpsTrackCurrent({
         sysUserId: userId,
         sysGpsLongitude: newLongitude,
         sysGpsLatitude: newLatitude,
         etlDateTime: currentDateTime,
-        numberOfWalks,
-        walkingStatus: "walking",
+        numberOfWalks: strollerStatus.numberOfWalks,
+        walkingStatus: walkingStatus,
       });
 
       await newGPSTrackData.save();
     }
 
     strollerStatus.numberOfWalks = numberOfWalks;
+    strollerStatus.walkingStatus = walkingStatus;
 
     await strollerStatus.save();
 

@@ -24,7 +24,7 @@ const strollerStatusSchema = new mongoose.Schema(
     steering: { type: Number, default: null }, // Steering value (-100 to 100),
     speed: { type: Number, default: null }, // Speed
     numberOfWalks: { type: Number, default: 0 },
-    walkingStatus: { type: String, default: "initial" }, // walking status
+    walkingStatus: { type: String, default: "IDLE" }, // walking status
   },
   { timestamps: true } // Automatically adds createdAt and updatedAt timestamps
 );
