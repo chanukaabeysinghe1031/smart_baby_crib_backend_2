@@ -53,6 +53,14 @@ function broadcastWS(message) {
 
 // Function to send commands to the stroller
 function sendCommand(command, topics) {
+  const mqttClient = mqtt.connect({
+    host: "2a5fd801f5304348ba68615833f3f501.s1.eu.hivemq.cloud",
+    port: 8883,
+    protocol: "mqtts",
+    username: "Protonest",
+    password: "kobve3-Rudmug-tidkax",
+    rejectUnauthorized: true,
+  });
   console.log(`Sending command to stroller: ${JSON.stringify(command)}`);
   mqttClient.publish(topics.commands, JSON.stringify(command), (err) => {
     if (err) {
@@ -106,7 +114,7 @@ async function handleGPSData({ latitude, longitude }, userId) {
       // If the distance before last 10 minuts and noe GPS locations are grater than 100m then it will be a walk
       // Calculate the timestamp 10 minutes before
       const targetTimestamp = new Date(
-        currentDateTime.getTime() - 10 * 60 * 1000
+        currentDateTime.getTime() - 1 * 60 * 1000
       );
 
       // Find the closest GPS point to the target timestamp
@@ -137,6 +145,13 @@ async function handleGPSData({ latitude, longitude }, userId) {
         );
 
         if (distanceDifferenceFor10minuts >= 100) {
+          console.log("----------------------------------------------");
+          console.log("----------------------------------------------");
+          console.log("--------------------- MOVING -----------------");
+          console.log("----------------------------------------------");
+          console.log("----------------------------------------------");
+          console.log("----------------------------------------------");
+
           walkingStatus = "MOVING_STATE";
         }
       } else {
@@ -149,7 +164,20 @@ async function handleGPSData({ latitude, longitude }, userId) {
         // Check whether stroller has been in 5m range for last 30 minutes
         let lastTimestamp = lastLocation.timestamp;
         const timeDifference = Math.abs(currentDateTime - lastTimestamp); // Difference in ms
-        if (timeDifference >= 30 * 1000) {
+        if (timeDifference >= 3 * 60 * 1000) {
+          console.log(
+            "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+          );
+          console.log(
+            "++++++++++++++++++++  NEW WALK +++++++++++++++++++++++++++++++++++++++++++"
+          );
+          console.log(
+            "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+          );
+          console.log(
+            "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+          );
+
           numberOfWalks += 1; // Increment walk count
           walkingStatus = "IDLE";
           saveLastGPSTrack = true;
