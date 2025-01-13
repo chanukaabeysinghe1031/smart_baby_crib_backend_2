@@ -438,6 +438,15 @@ function setupWebSocket(server) {
             strollerStatus.mode = mode;
             await strollerStatus.save();
           }
+          broadcastWS({
+            type: "modeChange",
+            data: {
+              success: true,
+              mode,
+              userId,
+              message: "Stroller mode updated successfully.",
+            },
+          });
         }
 
         if (type === "speedChange") {
@@ -618,14 +627,6 @@ function setupWebSocket(server) {
             await strollerData.save();
 
             console.log(`Distance reset successfully for user: ${userId}`);
-            ws.send(
-              JSON.stringify({
-                success: true,
-                userId,
-                message: "Distance reset successfully.",
-              })
-            );
-            return;
           } catch (error) {
             console.error("Error resetting distance:", error.message);
             ws.send(
@@ -712,14 +713,6 @@ function setupWebSocket(server) {
             await strollerData.save();
 
             console.log(`Distance tracking halted for user: ${userId}`);
-            ws.send(
-              JSON.stringify({
-                success: false,
-                userId,
-                message: "Distance tracking halted successfully",
-              })
-            );
-            return;
           } catch (error) {
             console.error("Error halting distance tracking:", error.message);
             ws.send(
@@ -805,14 +798,6 @@ function setupWebSocket(server) {
             await strollerData.save();
 
             console.log(`Distance tracking resumed for user: ${userId}`);
-            ws.send(
-              JSON.stringify({
-                success: true,
-                userId,
-                message: "Distance tracking resumed successfully..",
-              })
-            );
-            return;
           } catch (error) {
             console.error("Error resuming distance tracking:", error.message);
             ws.send(
@@ -825,7 +810,7 @@ function setupWebSocket(server) {
             return;
           }
         } else if (type == "getDistance") {
-          const { userId } = data; // Assuming userId is passed as a query parameter
+          const userId = data; // Assuming userId is passed as a query parameter
           console.log("Received request to get current distance");
 
           if (!userId) {
@@ -913,7 +898,7 @@ function setupWebSocket(server) {
             return;
           }
         } else if (type === "getStatus") {
-          const { userId } = data; // Assuming userId is passed as a query parameter
+          const userId = data; // Assuming userId is passed as a query parameter
           console.log("Received request to get stroller status");
 
           // Validate userId
@@ -984,13 +969,6 @@ function setupWebSocket(server) {
             });
 
             console.log(`Fetched stroller status for user: ${userId}`);
-            ws.send(
-              JSON.stringify({
-                success: true,
-                data: strollerData, // Return the stroller status data
-              })
-            );
-            return;
           } catch (error) {
             console.error("Error fetching stroller status:", error.message);
             ws.send(
@@ -1124,7 +1102,7 @@ function setupWebSocket(server) {
             return;
           }
         } else if (type == "getTempHumidity") {
-          const { userId } = data; // Expecting userId in the query parameters
+          const userId = data; // Expecting userId in the query parameters
 
           console.log(
             `Received request to get temperature and humidity for user ${userId}`
@@ -1169,17 +1147,6 @@ function setupWebSocket(server) {
                   "Stroller  temperature and humidity are received successfully.",
               },
             });
-
-            // Respond with temperature and humidity
-            ws.send(
-              JSON.stringify({
-                success: true,
-                userId,
-                temperature: strollerData.temperature,
-                humidity: strollerData.humidity,
-              })
-            );
-            return;
           } catch (error) {
             console.error(
               "Error fetching temperature and humidity:",
@@ -1285,15 +1252,6 @@ function setupWebSocket(server) {
             console.log(
               `Remote control updated to: ${remote} for user ${userId}`
             );
-            ws.send(
-              JSON.stringify({
-                success: true,
-                userId,
-                message: "Remote control updated successfully.",
-                remote: remote,
-              })
-            );
-            return;
           } catch (error) {
             console.error(
               "Error updating remote control option:",
@@ -1359,15 +1317,6 @@ function setupWebSocket(server) {
             strollerData.temperature = temperature;
             strollerData.humidity = humidity;
             await strollerData.save();
-
-            ws.send(
-              JSON.stringify({
-                success: true,
-                userId,
-                message: "Temperature and humidity updated successfully.",
-              })
-            );
-            return;
           } catch (error) {
             console.error(
               "Error updating temperature and humidity:",
