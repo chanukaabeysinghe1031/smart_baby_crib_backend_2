@@ -95,5 +95,7 @@ const server = app.listen(port, () => {
 // Setup web socket
 // setupMQTT(server);
 
+const userConnections = new Map();
+
 // Setup WebSocket
 setupWebSocket(server);
