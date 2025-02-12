@@ -46,12 +46,10 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
-function broadcastWS(message) {
-  if (wss) {
-    const data = JSON.stringify(message);
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) client.send(data);
-    });
+function broadcastWS(userId, message) {
+  const ws = userConnections.get(userId);
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify(message));
   }
 }
 
@@ -228,7 +226,7 @@ async function handleGPSData({ latitude, longitude }, userId) {
 
     // Broadcast to WebSocket clients
     try {
-      broadcastWS({
+      broadcastWS(userId, {
         type: "update",
         data: {
           userId: userId,
@@ -267,7 +265,7 @@ async function handleStatusUpdate({ status, userId }) {
       strollerStatus.status = status;
     }
 
-    broadcastWS({
+    broadcastWS(userId, {
       type: "status",
       data: {
         userId: userId,
@@ -302,7 +300,7 @@ async function handleTempHumidityUpdate({ temperature, humidity }, userId) {
       strollerStatus.humidity = humidity;
     }
 
-    broadcastWS({
+    broadcastWS(userId, {
       type: "tempHumidity",
       data: {
         userId: userId,
@@ -395,14 +393,15 @@ function setupMQTT(userId) {
 export const sendToUser = (userId, message) => {
   const ws = userConnections.get(userId);
   if (ws && ws.readyState === WebSocket.OPEN) {
-    ws.send(JSON.stringify(message));
+    ws.send(userId, JSON.stringify(message));
   }
 };
 
 function setupWebSocket(server) {
   server.on("upgrade", (request, socket, head) => {
     const url = new URL(request.url, `http://${request.headers.host}`);
-    const userId = url.searchParams.get("userId"); // Extract userId from query params
+    const pathParts = url.pathname.split("/"); // Split the path into segments
+    const userId = pathParts[pathParts.length - 1]; // Extract the last part (userId)
 
     if (!userId) {
       socket.destroy(); // Close connection if userId is missing
@@ -416,7 +415,6 @@ function setupWebSocket(server) {
   });
 
   wss.on("connection", (ws) => {
-    ws.send(JSON.stringify({ type: "initial", data: strollerStatus }));
     ws.on("message", async (message) => {
       try {
         const parsedMessage = JSON.parse(message);
@@ -428,6 +426,7 @@ function setupWebSocket(server) {
 
           if (!userId) {
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 message: "User ID required for WebSocket registration.",
@@ -439,6 +438,7 @@ function setupWebSocket(server) {
           userSockets.set(userId, ws); // Store the WebSocket instance for this userId
           console.log(`User ${userId} registered for WebSocket communication.`);
           ws.send(
+            userId,
             JSON.stringify({
               success: true,
               message: `WebSocket registered for user ${userId}`,
@@ -452,6 +452,7 @@ function setupWebSocket(server) {
 
           if (!userId || !mode) {
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -486,7 +487,7 @@ function setupWebSocket(server) {
             strollerStatus.mode = mode;
             await strollerStatus.save();
           }
-          broadcastWS({
+          broadcastWS(userId, {
             type: "modeChange",
             data: {
               success: true,
@@ -505,6 +506,7 @@ function setupWebSocket(server) {
           // Validate the speed
           if (![0, 7, 10, 15].includes(speed)) {
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -516,6 +518,7 @@ function setupWebSocket(server) {
 
           if (!userId) {
             ws.send(
+              userId,
               JSON.stringify({
                 error: "User ID is required to update the speed.",
               })
@@ -528,6 +531,7 @@ function setupWebSocket(server) {
           });
           if (!userExists) {
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -554,6 +558,7 @@ function setupWebSocket(server) {
 
             if (!strollerData) {
               ws.send(
+                userId,
                 JSON.stringify({
                   success: false,
                   userId,
@@ -571,7 +576,7 @@ function setupWebSocket(server) {
 
             console.log("OKOKOKOKOKOKOKO" + strollerData.speed);
             // Broadcast to all WebSocket clients
-            broadcastWS({
+            broadcastWS(userId, {
               type: "speedChange",
               data: {
                 success: true,
@@ -587,6 +592,7 @@ function setupWebSocket(server) {
           } catch (error) {
             console.error("Error updating stroller speed:", error.message);
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -600,6 +606,7 @@ function setupWebSocket(server) {
 
           if (!userId) {
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -614,6 +621,7 @@ function setupWebSocket(server) {
           }); // Replace UserModel with your actual user model
           if (!userExists) {
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -642,7 +650,7 @@ function setupWebSocket(server) {
           );
 
           // Broadcast the mode change to WebSocket clients
-          broadcastWS({
+          broadcastWS(userId, {
             type: "resetDistance",
             data: {
               success: true,
@@ -658,6 +666,7 @@ function setupWebSocket(server) {
 
             if (!strollerData) {
               ws.send(
+                userId,
                 JSON.stringify({
                   success: false,
                   userId,
@@ -680,6 +689,7 @@ function setupWebSocket(server) {
           } catch (error) {
             console.error("Error resetting distance:", error.message);
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -694,6 +704,7 @@ function setupWebSocket(server) {
 
           if (!userId) {
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -708,6 +719,7 @@ function setupWebSocket(server) {
           }); // Replace UserModel with your actual user model
           if (!userExists) {
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -730,7 +742,7 @@ function setupWebSocket(server) {
           sendCommand({ type: "halt", value: true }, topics);
 
           // Broadcast the mode change to WebSocket clients
-          broadcastWS({
+          broadcastWS(userId, {
             type: "haltDistance",
             data: {
               success: true,
@@ -746,6 +758,7 @@ function setupWebSocket(server) {
 
             if (!strollerData) {
               ws.send(
+                userId,
                 JSON.stringify({
                   success: false,
                   userId,
@@ -766,6 +779,7 @@ function setupWebSocket(server) {
           } catch (error) {
             console.error("Error halting distance tracking:", error.message);
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -780,6 +794,7 @@ function setupWebSocket(server) {
 
           if (!userId) {
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -794,6 +809,7 @@ function setupWebSocket(server) {
           }); // Replace UserModel with your actual user model
           if (!userExists) {
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -816,7 +832,7 @@ function setupWebSocket(server) {
           sendCommand({ type: "resume", value: true }, topics);
 
           // Broadcast the mode change to WebSocket clients
-          broadcastWS({
+          broadcastWS(userId, {
             type: "resumeDistance",
             data: {
               halted: false,
@@ -831,6 +847,7 @@ function setupWebSocket(server) {
 
             if (!strollerData) {
               ws.send(
+                userId,
                 JSON.stringify({
                   success: false,
                   userId,
@@ -851,6 +868,7 @@ function setupWebSocket(server) {
           } catch (error) {
             console.error("Error resuming distance tracking:", error.message);
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -865,6 +883,7 @@ function setupWebSocket(server) {
 
           if (!userId) {
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -880,6 +899,7 @@ function setupWebSocket(server) {
 
             if (!strollerData) {
               ws.send(
+                userId,
                 JSON.stringify({
                   success: false,
                   userId,
@@ -894,6 +914,7 @@ function setupWebSocket(server) {
             }); // Replace UserModel with your actual user model
             if (!userExists) {
               ws.send(
+                userId,
                 JSON.stringify({
                   success: false,
                   userId,
@@ -918,7 +939,7 @@ function setupWebSocket(server) {
               topics
             );
             // Broadcast the mode change to WebSocket clients
-            broadcastWS({
+            broadcastWS(userId, {
               type: "getDistance",
               data: {
                 distance: strollerData.distance || 0,
@@ -929,6 +950,7 @@ function setupWebSocket(server) {
 
             console.log(`Fetched distance for user: ${userId}`);
             ws.send(
+              userId,
               JSON.stringify({
                 success: true,
                 userId,
@@ -939,6 +961,7 @@ function setupWebSocket(server) {
           } catch (error) {
             console.error("Error fetching distance:", error.message);
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -954,6 +977,7 @@ function setupWebSocket(server) {
           // Validate userId
           if (!userId) {
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -969,6 +993,7 @@ function setupWebSocket(server) {
 
             if (!strollerData) {
               ws.send(
+                userId,
                 JSON.stringify({
                   success: false,
                   userId,
@@ -984,6 +1009,7 @@ function setupWebSocket(server) {
             }); // Replace UserModel with your actual user model
             if (!userExists) {
               ws.send(
+                userId,
                 JSON.stringify({
                   success: false,
                   userId,
@@ -1009,7 +1035,7 @@ function setupWebSocket(server) {
             );
 
             // Broadcast the mode change to WebSocket clients
-            broadcastWS({
+            broadcastWS(userId, {
               type: "getStatus",
               data: {
                 status: strollerData.status || null,
@@ -1022,6 +1048,7 @@ function setupWebSocket(server) {
           } catch (error) {
             console.error("Error fetching stroller status:", error.message);
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -1039,6 +1066,7 @@ function setupWebSocket(server) {
           // Validate userId
           if (!userId) {
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -1056,6 +1084,7 @@ function setupWebSocket(server) {
           ) {
             console.error("Invalid steering value received");
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -1070,6 +1099,7 @@ function setupWebSocket(server) {
           }); // Replace UserModel with your actual user model
           if (!userExists) {
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -1092,7 +1122,7 @@ function setupWebSocket(server) {
           sendCommand({ type: "steer", value: steering || null }, topics);
 
           // Broadcast the mode change to WebSocket clients
-          broadcastWS({
+          broadcastWS(userId, {
             type: "setSteering",
             data: {
               steering: steering,
@@ -1107,6 +1137,7 @@ function setupWebSocket(server) {
 
             if (!strollerData) {
               ws.send(
+                userId,
                 JSON.stringify({
                   success: false,
                   userId,
@@ -1133,6 +1164,7 @@ function setupWebSocket(server) {
 
             console.log(`Steering updated for user ${userId}: ${steering}`);
             ws.send(
+              userId,
               JSON.stringify({
                 success: true,
                 userId,
@@ -1143,6 +1175,7 @@ function setupWebSocket(server) {
           } catch (error) {
             console.error("Error updating steering:", error.message);
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -1161,6 +1194,7 @@ function setupWebSocket(server) {
           // Validate userId
           if (!userId) {
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -1177,6 +1211,7 @@ function setupWebSocket(server) {
 
             if (!strollerData) {
               ws.send(
+                userId,
                 JSON.stringify({
                   success: false,
                   userId,
@@ -1187,7 +1222,7 @@ function setupWebSocket(server) {
             }
 
             // Broadcast the mode change to WebSocket clients
-            broadcastWS({
+            broadcastWS(userId, {
               type: "getTempHumidity",
               data: {
                 temperature: strollerData.temperature,
@@ -1203,6 +1238,7 @@ function setupWebSocket(server) {
               error.message
             );
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -1222,6 +1258,7 @@ function setupWebSocket(server) {
           // Validate input
           if (!userId) {
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -1234,6 +1271,7 @@ function setupWebSocket(server) {
           if (!["phone", "ring"].includes(remote)) {
             console.error("Invalid remote control option received");
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -1248,6 +1286,7 @@ function setupWebSocket(server) {
           }); // Replace UserModel with your actual user model
           if (!userExists) {
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -1275,6 +1314,7 @@ function setupWebSocket(server) {
 
             if (!strollerData) {
               ws.send(
+                userId,
                 JSON.stringify({
                   success: false,
                   userId,
@@ -1290,7 +1330,7 @@ function setupWebSocket(server) {
             await strollerData.save();
 
             // Broadcast the mode change to WebSocket clients
-            broadcastWS({
+            broadcastWS(userId, {
               type: "setRemote",
               data: {
                 remote: remote,
@@ -1308,6 +1348,7 @@ function setupWebSocket(server) {
               error.message
             );
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -1326,6 +1367,7 @@ function setupWebSocket(server) {
           // Validate input
           if (!userId || temperature == null || humidity == null) {
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -1337,7 +1379,7 @@ function setupWebSocket(server) {
           }
 
           // Broadcast the mode change to WebSocket clients
-          broadcastWS({
+          broadcastWS(userId, {
             type: "setTempHumidity",
             data: {
               temperature,
@@ -1353,6 +1395,7 @@ function setupWebSocket(server) {
 
             if (!strollerData) {
               ws.send(
+                userId,
                 JSON.stringify({
                   success: false,
                   userId,
@@ -1373,6 +1416,7 @@ function setupWebSocket(server) {
               error.message
             );
             ws.send(
+              userId,
               JSON.stringify({
                 success: false,
                 userId,
@@ -1386,6 +1430,7 @@ function setupWebSocket(server) {
       } catch (error) {
         console.error("Error handling WebSocket message:", error.message);
         ws.send(
+          userId,
           JSON.stringify({
             success: false,
             userId,
@@ -1444,7 +1489,7 @@ router.post("/initialize", jwtAuth, async (req, res) => {
     const data = new ecbStrollerStatus({ userId, ...strollerStatus });
     const newData = await data.save();
     // Broadcast the mode change to WebSocket clients
-    broadcastWS({
+    broadcastWS(userId, {
       type: "speedChange",
       data: {
         speed,
@@ -1509,7 +1554,7 @@ router.post("/mode", jwtAuth, async (req, res) => {
     });
   }
   // Broadcast the mode change to WebSocket clients
-  broadcastWS({
+  broadcastWS(userId, {
     type: "modeChange",
     data: {
       mode,
@@ -1601,7 +1646,7 @@ router.post("/speed", jwtAuth, async (req, res) => {
     await strollerData.save();
 
     // Broadcast the mode change to WebSocket clients
-    broadcastWS({
+    broadcastWS(userId, {
       type: "speedChange",
       data: {
         speed,
@@ -1661,7 +1706,7 @@ router.post("/distance/reset", jwtAuth, async (req, res) => {
   );
 
   // Broadcast the mode change to WebSocket clients
-  broadcastWS({
+  broadcastWS(userId, {
     type: "resetDistance",
     data: {
       distance: 0,
@@ -1737,7 +1782,7 @@ router.post("/distance/halt", jwtAuth, async (req, res) => {
   sendCommand({ type: "halt", value: true }, topics);
 
   // Broadcast the mode change to WebSocket clients
-  broadcastWS({
+  broadcastWS(userId, {
     type: "haltDistance",
     data: {
       halted: true,
@@ -1811,7 +1856,7 @@ router.post("/distance/resume", jwtAuth, async (req, res) => {
   sendCommand({ type: "resume", value: true }, topics);
 
   // Broadcast the mode change to WebSocket clients
-  broadcastWS({
+  broadcastWS(userId, {
     type: "resumeDistance",
     data: {
       halted: false,
@@ -1898,7 +1943,7 @@ router.get("/distance", jwtAuth, async (req, res) => {
       topics
     );
     // Broadcast the mode change to WebSocket clients
-    broadcastWS({
+    broadcastWS(userId, {
       type: "getDistance",
       data: {
         distance: strollerData.distance || 0,
@@ -1966,7 +2011,7 @@ router.get("/status", jwtAuth, async (req, res) => {
     sendCommand({ type: "status", value: strollerData.status || null }, topics);
 
     // Broadcast the mode change to WebSocket clients
-    broadcastWS({
+    broadcastWS(userId, {
       type: "getStatus",
       data: {
         status: strollerData.status || null,
@@ -2031,7 +2076,7 @@ router.post("/steer", jwtAuth, async (req, res) => {
   sendCommand({ type: "steer", value: steering || null }, topics);
 
   // Broadcast the mode change to WebSocket clients
-  broadcastWS({
+  broadcastWS(userId, {
     type: "setSteering",
     data: {
       steering: steering,
@@ -2107,7 +2152,7 @@ router.get("/temp_humidity", jwtAuth, async (req, res) => {
     }
 
     // Broadcast the mode change to WebSocket clients
-    broadcastWS({
+    broadcastWS(userId, {
       type: "getTempHumidity",
       data: {
         temperature: strollerData.temperature,
@@ -2192,7 +2237,7 @@ router.post("/remote", jwtAuth, async (req, res) => {
     await strollerData.save();
 
     // Broadcast the mode change to WebSocket clients
-    broadcastWS({
+    broadcastWS(userId, {
       type: "setRemote",
       data: {
         remote: remote,
@@ -2233,7 +2278,7 @@ router.put("/temp_humidity", jwtAuth, async (req, res) => {
   }
 
   // Broadcast the mode change to WebSocket clients
-  broadcastWS({
+  broadcastWS(userId, {
     type: "setTempHumidity",
     data: {
       temperature,
